@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E5E4A'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='white' stroke-width='4'/%3E%3Ccircle cx='32' cy='15' r='4.5' fill='white'/%3E%3Ccircle cx='46.7' cy='40.5' r='4.5' fill='white'/%3E%3Ccircle cx='17.3' cy='40.5' r='4.5' fill='white'/%3E%3Ccircle cx='32' cy='32' r='3.5' fill='%23FFB81C'/%3E%3C/svg%3E" />
+<title>UniCircle — Find your people on campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F3EC; --surface:#FFFFFF; --surface2:#EFE9DC; --ink:#131E1A; --muted:#5E6E67; --line:#E3DDCE;
+  --brand:#0E5E4A; --brand-dark:#0A4636; --brand-light:#DFF3E9; --accent:#FF5A2D; --accent-soft:#FFE8E0; --gold:#FFB81C; --gold-soft:#FFF3C4;
+  --radius:20px; --shadow:0 12px 32px rgba(19,30,26,.08); --shadow-lg:0 20px 50px rgba(19,30,26,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0C1210; --surface:#16211D; --surface2:#1E2C27; --ink:#F2EFE6; --muted:#9AA8A2; --line:#26352F; --brand:#2ABF8F; --brand-dark:#1E9A73; --brand-light:#12372A; --accent:#FF7A4D; --accent-soft:#3A231B; --gold-soft:#3A3112; --shadow:0 12px 32px rgba(0,0,0,.35); --shadow-lg:0 20px 50px rgba(0,0,0,.45); }
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit} button,input,select,textarea{font:inherit}
+button{cursor:pointer} :focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;min-width:0}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:var(--brand);color:#fff;display:grid;place-items:center;font-family:Fraunces,serif;font-size:19px;flex-shrink:0}
+.logo-text{line-height:1.05} .logo-text strong{font-size:16px} .logo-text small{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.pill{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+.top-actions{display:flex;gap:10px;align-items:center}
+.pill{font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.btn{border:0;border-radius:999px;padding:12px 20px;font-weight:800;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--brand);color:#fff;box-shadow:0 8px 20px rgba(14,94,74,.25)} .btn-primary:hover{background:var(--brand-dark)}
+.btn-accent{background:var(--accent);color:#fff} .btn-accent:hover{filter:brightness(.96)}
+.btn-ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)} .btn-ghost:hover{border-color:var(--ink)}
+.btn-sm{padding:9px 14px;font-size:13px}
+.btn-block{width:100%}
+.link-btn{background:none;border:0;font-weight:700;color:var(--brand);padding:6px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.hidden{display:none!important}
+
+/* AUTH */
+.auth-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;padding:36px 0 56px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:#22C55E;display:block;box-shadow:0 0 0 4px #22C55E22}
+h1.display{font-family:Fraunces,serif;font-size:clamp(42px,6vw,68px);line-height:.95;letter-spacing:-.03em;margin:18px 0 16px}
+h1.display em{font-style:normal;color:var(--brand);position:relative}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);max-width:520px}
+.feature-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.feature{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.feature b{display:block;font-size:14px;margin-bottom:4px} .feature p{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
+.social-proof{display:flex;align-items:center;gap:12px;margin-top:8px}
+.avatar-stack{display:flex} .avatar-stack span{width:36px;height:36px;border-radius:50%;border:3px solid var(--bg);display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;margin-left:-8px} .avatar-stack span:first-child{margin-left:0}
+.proof-text{font-size:13px;line-height:1.4} .proof-text b{display:block;font-size:14px}
+
+/* HERO SCROLL ANIMATIONS */
+.hero-left{position:relative}
+.hero-fx{will-change:transform,opacity}
+.hero-chip{position:absolute;z-index:2;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:12.5px;font-weight:800;box-shadow:var(--shadow);white-space:nowrap;pointer-events:none}
+.hero-chip b{color:var(--brand)}
+.hero-chip-a{top:2px;right:0;animation:heroFloat 5.2s ease-in-out infinite}
+.hero-chip-b{top:132px;right:8px;animation:heroFloat 6.4s ease-in-out .8s infinite}
+@keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1deg)}}
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.8,.3,1)}
+[data-reveal].revealed{opacity:1;transform:translateY(0)}
+.marquee-band{margin:6px 0 44px;background:var(--ink);color:var(--bg);border-radius:20px;padding:14px 0;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee-band:hover .marquee-track{animation-play-state:paused}
+.marquee-track{display:flex;gap:0;width:max-content;animation:heroMarquee 36s linear infinite}
+.marquee-set{display:flex;align-items:center;flex-shrink:0}
+.marquee-set span{font-family:Fraunces,serif;font-size:17px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;padding:0 6px}
+.marquee-set i{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin:0 14px}
+@keyframes heroMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.scroll-cue{display:flex;flex-direction:column;align-items:center;gap:5px;margin:2px auto 40px;background:none;border:0;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.scroll-cue .cue-arrow{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:15px;color:var(--brand);animation:cueBounce 1.8s ease-in-out infinite}
+@keyframes cueBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+/* ===== CAMPUS JOURNEY — swipe/scroll like entering college & meeting a friend ===== */
+.journey{position:relative;height:380vh;margin:10px 0 8px}
+.journey-sticky{position:sticky;top:64px;height:calc(100vh - 64px);height:calc(100dvh - 64px);min-height:540px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:12px 0 8px}
+.journey-head{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.journey-head h2{font-family:Fraunces,serif;font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;margin:0;line-height:1.02}
+.journey-head h2 em{font-style:normal;color:var(--brand)}
+.journey-head p{margin:5px 0 0;color:var(--muted);font-size:14px;line-height:1.5;max-width:560px}
+.journey-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.journey-stage{position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#BFE8D8 0%,#E8F6EE 42%,#FFF3C4 100%);border:1px solid var(--line);box-shadow:var(--shadow-lg);height:min(56vh,520px);min-height:340px;isolation:isolate}
+@media (prefers-color-scheme: dark){.journey-stage{background:linear-gradient(180deg,#12372A 0%,#1E2C27 48%,#3A3112 100%)}}
+.j-sun{position:absolute;top:22px;right:34px;width:58px;height:58px;border-radius:50%;background:#FFB81C;box-shadow:0 0 0 12px #FFB81C2e,0 0 44px #FFB81C66;z-index:1}
+.j-cloud{position:absolute;background:#fff;border-radius:999px;opacity:.92;z-index:1;will-change:transform}
+.j-cloud:before,.j-cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
+.j-cloud-a{top:30px;left:8%;width:84px;height:24px}.j-cloud-a:before{width:38px;height:38px;top:-19px;left:12px}.j-cloud-a:after{width:26px;height:26px;top:-12px;right:12px}
+.j-cloud-b{top:64px;left:62%;width:64px;height:19px;opacity:.75}.j-cloud-b:before{width:28px;height:28px;top:-14px;left:10px}.j-cloud-b:after{width:20px;height:20px;top:-9px;right:10px}
+@media (prefers-color-scheme: dark){.j-cloud,.j-cloud:before,.j-cloud:after{background:#9AA8A2}}
+.j-building{position:absolute;left:50%;bottom:29%;width:min(430px,72%);transform-origin:50% 100%;will-change:transform;z-index:2;filter:drop-shadow(0 14px 18px rgba(19,30,26,.16))}
+.j-building svg{display:block;width:100%;height:auto}
+.j-trees{position:absolute;bottom:27%;font-size:clamp(28px,5vw,46px);z-index:2;line-height:1;will-change:transform}
+.j-tree-l{left:4%}.j-tree-r{right:4%}
+.j-ground{position:absolute;left:0;right:0;bottom:0;height:31%;background:linear-gradient(180deg,#2E9E6B,#0E5E4A);z-index:3}
+.j-path{position:absolute;left:50%;bottom:0;height:32%;width:46%;transform:translateX(-50%);background:linear-gradient(180deg,#E9D9B4,#D9BE86);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);z-index:4;opacity:.96}
+.j-gates{position:absolute;left:50%;bottom:23%;transform:translateX(-50%);width:min(560px,92%);height:132px;z-index:6;perspective:700px;pointer-events:none}
+.j-pillar{position:absolute;bottom:0;width:22px;height:132px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#8A6D3B,#5F4A26);border:1px solid #00000022;z-index:3}
+.j-pillar:before{content:"";position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.j-pillar-l{left:0}.j-pillar-r{right:0}
+.j-gate{position:absolute;bottom:8px;width:calc(50% - 24px);height:104px;border:3px solid #24312C;border-bottom-width:5px;border-radius:10px 10px 4px 4px;background:repeating-linear-gradient(90deg,transparent 0 13px,#24312C 13px 16px),linear-gradient(180deg,transparent 30%,#24312C33 30%,#24312C33 34%,transparent 34%,transparent 66%,#24312C33 66%,#24312C33 70%,transparent 70%);will-change:transform;z-index:2}
+.j-gate-l{left:22px;transform-origin:left center}
+.j-gate-r{right:22px;transform-origin:right center}
+.j-sign{position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px;white-space:nowrap;z-index:4}
+.j-person{position:absolute;z-index:8;display:flex;flex-direction:column;align-items:center;gap:3px;will-change:transform,opacity;text-align:center}
+.j-person .j-avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;border:3px solid #fff;box-shadow:0 10px 22px rgba(0,0,0,.28);position:relative}
+.j-person .j-name{font-size:11px;font-weight:800;background:#fff;color:#131E1A;padding:3px 8px;border-radius:999px;box-shadow:0 4px 10px rgba(0,0,0,.16);white-space:nowrap}
+.j-you{left:50%;bottom:4%;z-index:9;transform:translateX(-50%)}
+.j-you .j-avatar{width:62px;height:62px;font-size:17px}
+.j-bag{position:absolute;right:-13px;top:28px;font-size:19px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+.j-friend-1{left:16%;bottom:24%}.j-friend-2{right:16%;bottom:24%}.j-friend-3{left:59%;bottom:35%}
+.j-bubble{position:absolute;z-index:10;background:#fff;color:#131E1A;font-size:12.5px;font-weight:800;padding:8px 11px;border-radius:15px;border-bottom-left-radius:5px;box-shadow:0 10px 22px rgba(0,0,0,.18);will-change:transform,opacity;white-space:nowrap}
+.j-bubble-1{left:8%;bottom:47%}.j-bubble-2{right:7%;bottom:48%;border-bottom-left-radius:15px;border-bottom-right-radius:5px}.j-bubble-3{left:31%;bottom:56%;transform:translateX(-50%)}
+.j-spark{position:absolute;z-index:7;font-size:20px;will-change:transform,opacity;pointer-events:none}
+.j-caption-box{position:relative;min-height:58px;text-align:center}
+.j-caption{position:absolute;inset:0;opacity:0;transform:translateY(10px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
+.j-caption.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.j-caption b{display:block;font-size:17px;letter-spacing:-.01em}
+.j-caption span{font-size:13.5px;color:var(--muted);line-height:1.45}
+.j-progress{display:flex;align-items:center;gap:12px}
+.j-progress-track{flex:1;height:8px;border-radius:999px;background:var(--surface2);overflow:hidden;border:1px solid var(--line)}
+.j-progress-track i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--gold));border-radius:999px}
+.j-dots{display:flex;gap:6px}
+.j-dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block;transition:.25s}
+.j-dots i.on{background:var(--brand);transform:scale(1.25)}
+.j-scene-label{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.journey-reduced{height:auto}.journey-reduced .journey-sticky{position:static;height:auto;min-height:0}
+@media(max-width:620px){.journey{height:340vh}.journey-sticky{top:56px;height:calc(100dvh - 56px);min-height:500px}.journey-stage{height:48vh;min-height:320px}.j-person .j-avatar{width:46px;height:46px;font-size:13px}.j-you .j-avatar{width:54px;height:54px}.j-friend-1{left:7%}.j-friend-2{right:7%}.j-bubble{font-size:11.5px;padding:7px 9px}.j-bubble-1{left:3%}.j-bubble-2{right:3%}.j-gates{height:108px}.j-gate{height:84px}.j-pillar{height:108px}.j-caption-box{min-height:66px}}
+@media(max-width:960px){.hero-chip{display:none}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+.auth-card{padding:28px;position:sticky;top:84px}
+.tabs{display:flex;background:var(--surface2);padding:4px;border-radius:999px;margin-bottom:20px}
+.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:999px;font-weight:800;font-size:14px;color:var(--muted)}
+.tabs button.active{background:var(--surface);color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.label{font-size:13px;font-weight:700;display:block;margin:14px 0 7px}
+.input{width:100%;padding:13px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.input::placeholder{color:var(--muted)} .input:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 4px color-mix(in srgb, var(--brand) 15%, transparent)}
+.hint{font-size:12px;color:var(--muted);line-height:1.5}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
+.college-mini{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.college-mini button{border:1px solid var(--line);background:var(--bg);padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.type-badge{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:999px;background:var(--gold-soft);border:1px solid #FFD34D66}
+.suggest-list{display:grid;gap:8px;margin-top:10px}
+.suggest-item{width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.suggest-item:hover,.suggest-item.selected{border-color:var(--brand);background:var(--brand-light)}
+.suggest-item b{font-size:13.5px;display:block} .suggest-item span{font-size:12px;color:var(--muted)}
+.map-results{display:grid;gap:8px;margin-top:10px}
+.map-result{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 12px}
+.map-result b{font-size:13px;display:block;line-height:1.4} .map-result p{margin:3px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+.map-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.map-link{font-size:12px;font-weight:800;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);text-decoration:none}
+.type-filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.type-filters button{border:1px solid var(--line);background:var(--surface);padding:8px 12px;border-radius:999px;font-weight:700;font-size:13px}
+.type-filters button.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* ONBOARD */
+.progress{max-width:760px;margin:28px auto 0}
+.steps{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.step-dot{flex:1}
+.step-dot label{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:8px}
+.bar{height:8px;border-radius:999px;background:var(--surface2);overflow:hidden} .bar i{display:block;height:100%;background:var(--brand);border-radius:999px;transition:width .4s}
+.onboard-card{max-width:760px;margin:0 auto 48px;padding:28px}
+.search-wrap{position:relative} .search-wrap input{padding-left:42px}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.55}
+.college-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;max-height:360px;overflow:auto;padding-right:4px}
+.college-item{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;width:100%}
+.college-item:hover{border-color:var(--brand)} .college-item.selected{border-color:var(--brand);background:var(--brand-light)}
+.college-badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;font-size:13px}
+.college-item b{font-size:14px;display:block} .college-item span{font-size:12px;color:var(--muted)}
+.chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--surface);padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700}
+.chip.selected{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+textarea.input{resize:vertical;min-height:88px}
+
+/* APP SHELL */
+.app-shell{display:grid;grid-template-columns:260px 1fr;gap:22px;padding:22px 0 90px;align-items:start}
+.sidebar{position:sticky;top:84px}
+.profile-mini{padding:18px;display:flex;gap:12px;align-items:center}
+.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;position:relative}
+.online-dot{position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:#22C55E;border:2px solid var(--surface)}
+.navlist{display:grid;gap:6px;margin-top:14px}
+.navlist button{display:flex;align-items:center;justify-content:space-between;text-align:left;border:0;background:transparent;padding:12px 14px;border-radius:14px;font-weight:700;color:var(--muted)}
+.navlist button.active{background:var(--ink);color:var(--bg)} .navlist button.active .badge{background:var(--accent);color:#fff}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:800;min-width:22px;height:22px;border-radius:999px;display:inline-grid;place-items:center;padding:0 6px}
+.side-card{margin-top:14px;padding:18px;background:var(--brand);color:#fff;border-radius:20px}
+.side-card h4{margin:0 0 6px;font-size:15px} .side-card p{margin:0;font-size:13px;line-height:1.5;opacity:.9}
+
+.hero-strip{border-radius:24px;background:var(--ink);color:var(--bg);padding:22px;display:flex;justify-content:space-between;gap:16px;align-items:center;overflow:hidden;position:relative}
+.hero-strip h2{font-family:Fraunces,serif;font-size:28px;line-height:1.05;margin:0 0 6px;letter-spacing:-.02em}
+.hero-strip p{margin:0;opacity:.75;font-size:14px;line-height:1.5;max-width:520px}
+.hero-stats{display:flex;gap:10px;flex-shrink:0}
+.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px 14px;min-width:92px;text-align:center}
+.stat b{font-size:20px;display:block} .stat span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7;font-weight:700}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;align-items:center}
+.toolbar .search-wrap{flex:1;min-width:220px}
+.filter-pills{display:flex;gap:8px;flex-wrap:wrap}
+.filter-pills button{border:1px solid var(--line);background:var(--surface);padding:9px 13px;border-radius:999px;font-weight:700;font-size:13px}
+.filter-pills button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.select{padding:11px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13px;color:var(--ink)}
+
+.people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.person{overflow:hidden;display:flex;flex-direction:column}
+.person-cover{height:86px;position:relative;padding:14px;display:flex;justify-content:space-between;align-items:flex-start}
+.person-cover .match{ background:#fff;color:#111;font-size:12px;font-weight:800;padding:6px 9px;border-radius:999px}
+.person-cover .loc{font-size:12px;font-weight:700;background:rgba(0,0,0,.22);color:#fff;padding:6px 9px;border-radius:999px;backdrop-filter:blur(4px)}
+.person-body{padding:0 18px 18px;margin-top:-26px;display:flex;flex-direction:column;flex:1}
+.person-head{display:flex;gap:12px;align-items:flex-end}
+.person-head .avatar{width:56px;height:56px;border:3px solid var(--surface);font-size:16px}
+.person h3{margin:2px 0 2px;font-size:17px;letter-spacing:-.02em} .person .meta{font-size:13px;color:var(--muted);line-height:1.4}
+.bio{font-size:13.5px;line-height:1.55;color:var(--muted);margin:12px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.tag{font-size:11px;font-weight:800;letter-spacing:.02em;padding:6px 8px;border-radius:999px;background:var(--surface2);color:var(--ink)}
+.tag.mutual{background:var(--gold-soft);border:1px solid #FFD34D55}
+.card-actions{display:flex;gap:8px;margin-top:16px}
+.card-actions .btn{flex:1}
+
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:6px 0 14px}
+.section-head h2{margin:0;font-family:Fraunces,serif;font-size:28px;letter-spacing:-.02em}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.conn-list{display:grid;gap:12px}
+.conn-row{padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.conn-row .grow{flex:1;min-width:180px}
+
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:320px 1fr;gap:16px;height:620px}
+.chat-list{overflow:hidden;display:flex;flex-direction:column}
+.chat-list-head{padding:16px;border-bottom:1px solid var(--line)} .chat-list-head h3{margin:0}
+.chat-items{overflow:auto;flex:1}
+.chat-item{width:100%;text-align:left;border:0;background:transparent;padding:14px 16px;display:flex;gap:12px;border-bottom:1px solid var(--line)}
+.chat-item:hover,.chat-item.active{background:var(--surface2)}
+.chat-item b{font-size:14px} .chat-item p{margin:2px 0 0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.chat-window{display:flex;flex-direction:column;overflow:hidden}
+.chat-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.messages{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);background-size:22px 22px}
+.bubble{max-width:72%;padding:11px 13px;border-radius:18px;font-size:14px;line-height:1.5}
+.bubble.them{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:6px}
+.bubble.me{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:6px}
+.bubble small{display:block;font-size:11px;opacity:.65;margin-top:4px}
+.typing{align-self:flex-start;background:var(--surface);border:1px solid var(--line);padding:10px 12px;border-radius:999px;font-size:12px;color:var(--muted);font-weight:700}
+.chat-input{padding:12px;border-top:1px solid var(--line);display:flex;gap:10px;background:var(--surface)}
+.chat-input input{flex:1}
+.quick-replies{display:flex;gap:8px;flex-wrap:wrap;padding:0 12px 10px;background:var(--surface)}
+.quick-replies button{font-size:12px;font-weight:700;border:1px solid var(--line);background:var(--bg);padding:7px 10px;border-radius:999px}
+
+.empty{padding:36px 20px;text-align:center;border:1.5px dashed var(--line);border-radius:20px;background:var(--surface)}
+.empty h3{margin:0 0 6px} .empty p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:13px 16px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.mobile-nav{display:none}
+.footer{border-top:1px solid var(--line);padding:22px 0 90px;color:var(--muted);font-size:13px}
+.kbd{font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:6px;border:1px solid var(--line)}
+
+@media(max-width:960px){
+  .auth-grid{grid-template-columns:1fr} .auth-card{position:static}
+  .app-shell{grid-template-columns:1fr} .sidebar{display:none}
+  .people-grid{grid-template-columns:1fr 1fr}
+  .chat-layout{grid-template-columns:1fr;height:auto} .chat-window{height:560px}
+  .chat-list{max-height:300px}
+  .hero-strip{flex-direction:column;align-items:flex-start} .hero-stats{width:100%} .stat{flex:1}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom));justify-content:space-around}
+  .mobile-nav button{border:0;background:transparent;font-weight:800;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px}
+  .mobile-nav button.active{color:var(--brand);background:var(--brand-light)}
+}
+@media(max-width:620px){
+  .people-grid{grid-template-columns:1fr} .college-grid,.grid2,.feature-list{grid-template-columns:1fr}
+  .topbar-in{padding:12px 16px} .wrap{padding:0 16px} h1.display{font-size:44px}
+  .bubble{max-width:86%} .pill{max-width:150px;font-size:12px;padding:7px 9px} .logo-text strong{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="logo"><div class="logo-mark"><svg width="23" height="23" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="17" stroke="#fff" stroke-width="4.5"/><circle cx="32" cy="15" r="5" fill="#fff"/><circle cx="46.7" cy="40.5" r="5" fill="#fff"/><circle cx="17.3" cy="40.5" r="5" fill="#fff"/><circle cx="32" cy="32" r="4" fill="#FFB81C"/></svg></div><div class="logo-text"><strong>Uni<span style="color:var(--brand)">Circle</span></strong><small>College Friend Finder</small></div></div>
+    <div class="top-actions">
+      <span class="pill" id="topLocationPill">📍 Pick your college to start</span>
+      <button class="btn btn-ghost btn-sm hidden" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+</header>
+
+<!-- ========== AUTH VIEW ========== -->
+<main id="authView">
+  <div class="wrap">
+    <div class="auth-grid">
+      <section class="hero-left">
+        <div class="hero-chip hero-chip-a" aria-hidden="true">🎓 <b>133+</b> colleges listed</div>
+        <div class="hero-chip hero-chip-b" aria-hidden="true">💬 New chats <b>every day</b></div>
+        <div class="hero-fx" id="heroFx">
+        <span class="eyebrow" data-reveal><i></i> Demo preview — sample campus community</span>
+        <h1 class="display" data-reveal style="transition-delay:.08s">Find your<br>people on<br><em>campus.</em></h1>
+        <p class="lead" data-reveal style="transition-delay:.16s">No more eating lunch alone or missing the group project chat. Open to <b>every student in India</b> — Diploma / Polytechnic, BTech / Engineering, Medical &amp; degree colleges across all states. Type your college name + city + state in Create Account: we search the full list <b>and the map</b> for the correct college for exactly what you typed, then surface people nearby who share your course, year and interests.</p>
+        <div class="feature-list">
+          <div class="feature" data-reveal style="transition-delay:.05s"><b>🏫 College-first matching</b><p>See students from your college first, then your city — not random strangers.</p></div>
+          <div class="feature" data-reveal style="transition-delay:.12s"><b>💬 Chat that just works</b><p>Connect, get accepted, and chat instantly. Ice-breakers included.</p></div>
+          <div class="feature" data-reveal style="transition-delay:.19s"><b>🎯 Interest matches</b><p>Football, coding, music, startups — mutual interests are highlighted for you.</p></div>
+          <div class="feature" data-reveal style="transition-delay:.26s"><b>🛡️ Campus-safe</b><p>College email sign-up, block & report controls, and year/course filters.</p></div>
+        </div>
+        </div>
+        <div class="social-proof">
+          <div class="avatar-stack"><span style="background:#0E5E4A">AR</span><span style="background:#FF5A2D">SK</span><span style="background:#7C3AED">NP</span><span style="background:#0EA5E9">DM</span><span style="background:#111827">+</span></div>
+          <div class="proof-text"><b>Example story: “Found my study group in day one.”</b><span style="color:var(--muted)">Illustrative — sample profiles in this demo</span></div>
+        </div>
+        <p class="hint" style="margin-top:18px">Popular right now:</p>
+        <div class="college-mini" id="popularColleges"></div>
+      </section>
+
+      <section class="card auth-card" aria-label="Login">
+        <div class="tabs" role="tablist">
+          <button id="tabSignup" class="active" onclick="setAuthMode('signup')">Create account</button>
+          <button id="tabLogin" onclick="setAuthMode('login')">Sign in</button>
+        </div>
+        <h2 style="margin:0;font-size:22px;letter-spacing:-.02em" id="authTitle">Join your campus circle</h2>
+        <p class="hint" style="margin:6px 0 4px" id="authSub">Use your college email — it helps us verify you’re really a student.</p>
+
+        <form id="authForm" onsubmit="handleAuth(event)">
+          <div id="nameField">
+            <label class="label" for="fullName">Full name</label>
+            <input class="input" id="fullName" placeholder="e.g. Aarav Reddy" autocomplete="name" value="Aarav Reddy">
+          </div>
+          <label class="label" for="email">College email</label>
+          <input class="input" id="email" type="email" placeholder="you@college.edu" required value="aarav@iiith.ac.in">
+          <label class="label" for="password">Password</label>
+          <input class="input" id="password" type="password" placeholder="••••••••" required value="campus123">
+
+          <!-- College entry — right in Create Account, for every student in India -->
+          <div id="signupCollegeFields" style="margin-top:18px;border:1.5px solid var(--brand);background:var(--brand-light);border-radius:16px;padding:16px">
+            <b style="font-size:14px">🏫 Your college — enter it here</b>
+            <p class="hint" style="margin-top:4px">Diploma / Polytechnic, BTech / Engineering, Medical &amp; every other college in India works. Type your college name + city + state — we search our full India list <b>and</b> the map for the correct college for exactly what you typed.</p>
+            <label class="label" for="signupCollegeType">I study in</label>
+            <select class="input" id="signupCollegeType" onchange="onSignupCollegeInput()">
+              <option value="">All types</option>
+              <option value="BTech / Engineering">BTech / Engineering</option>
+              <option value="Diploma / Polytechnic">Diploma / Polytechnic</option>
+              <option value="Medical">Medical (MBBS / BDS / Nursing / Pharmacy)</option>
+              <option value="University / Degree">University / Degree / Arts &amp; Science</option>
+            </select>
+            <label class="label" for="signupCollegeName">College name *</label>
+            <input class="input" id="signupCollegeName" placeholder="e.g. Sri Venkateswara University, SV Medical College, Govt Polytechnic…" autocomplete="off" oninput="onSignupCollegeInput()" onchange="onSignupCollegeInput()">
+            <div class="suggest-list" id="signupSuggestList" aria-live="polite"></div>
+            <div class="grid2">
+              <div>
+                <label class="label" for="signupCollegeCity">City where college is present *</label>
+                <input class="input" id="signupCollegeCity" list="collegeCityList" placeholder="e.g. Tirupati, Hyderabad" autocomplete="off" oninput="onSignupCollegeInput()" onchange="onSignupCollegeInput()">
+                <datalist id="collegeCityList"></datalist>
+              </div>
+              <div>
+                <label class="label" for="signupCollegeState">State / UT *</label>
+                <select class="input" id="signupCollegeState" onchange="onSignupCollegeInput()"></select>
+              </div>
+            </div>
+            <p class="hint" id="signupCollegeMatch" style="margin-top:10px;font-weight:700;color:var(--brand)"></p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="searchSignupOnMap(true)">📍 Search this college on map</button>
+              <a class="map-link" id="signupGoogleMapsLink" href="https://www.google.com/maps/search/?api=1&query=IIIT+Hyderabad+Hyderabad+Telangana+India" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+            </div>
+            <p class="hint" id="signupMapStatus" style="margin-top:8px"></p>
+            <div class="map-results" id="signupMapResults"></div>
+            <p class="hint" style="margin-top:8px">Map search uses OpenStreetMap for the typed name + city + state, and the Google Maps link always searches exactly what you typed — so a college not in any preset list can still be found and verified on the map.</p>
+          </div>
+
+          <p class="hint" id="authError" style="color:#DC2626;display:none"></p>
+          <button class="btn btn-primary btn-block" style="margin-top:18px" type="submit" id="authSubmit">Create account → Continue</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-ghost btn-block" onclick="quickDemo()">⚡ Try demo instantly — no password needed</button>
+        <p class="hint" style="text-align:center;margin-top:14px">Demo autofill is on so you can try the flow in one tap — edit the name/email above to make it yours. All demo data lives only in this tab.</p>
+      </section>
+    </div>
+
+    <!-- ===== CAMPUS JOURNEY: swipe / scroll = walk into college & meet friends ===== -->
+    <section class="journey" id="campusJourney" aria-label="Scroll story: entering your college and meeting friends">
+      <div class="journey-sticky">
+        <div class="journey-head">
+          <div>
+            <h2>Keep swiping — <em>walk into your college</em></h2>
+            <p>Like a little video, this scene moves only as you scroll: the gates open, you walk in, and your first friends come to meet you.</p>
+          </div>
+          <div class="journey-actions">
+            <button type="button" class="btn btn-primary btn-sm" id="journeyPlayBtn" onclick="playJourney()">▶ Play the story</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="skipJourney()">Skip ↓</button>
+          </div>
+        </div>
+
+        <div class="journey-stage" id="journeyStage" aria-hidden="true">
+          <div class="j-sun"></div>
+          <div class="j-cloud j-cloud-a" id="jCloudA"></div>
+          <div class="j-cloud j-cloud-b" id="jCloudB"></div>
+          <div class="j-building" id="jBuilding">
+            <svg viewBox="0 0 340 220" role="img" aria-label="College building">
+              <rect x="128" y="18" width="84" height="52" rx="6" fill="#FFF8E7" stroke="#E3DDCE"/>
+              <path d="M118 22 L170 2 L222 22 Z" fill="#0E5E4A"/>
+              <circle cx="170" cy="42" r="13" fill="#fff" stroke="#0E5E4A" stroke-width="3"/><path d="M170 34 V42 L176 46" stroke="#131E1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <rect x="38" y="66" width="264" height="118" rx="8" fill="#FFF8E7" stroke="#E3DDCE"/>
+              <path d="M28 70 L170 38 L312 70 Z" fill="#0E5E4A"/>
+              <rect x="52" y="88" width="26" height="30" rx="4" fill="#BFE8D8"/><rect x="92" y="88" width="26" height="30" rx="4" fill="#FFB81C" opacity=".75"/><rect x="222" y="88" width="26" height="30" rx="4" fill="#BFE8D8"/><rect x="262" y="88" width="26" height="30" rx="4" fill="#FFB81C" opacity=".75"/>
+              <rect x="52" y="132" width="26" height="30" rx="4" fill="#FFB81C" opacity=".55"/><rect x="262" y="132" width="26" height="30" rx="4" fill="#BFE8D8"/>
+              <rect x="146" y="96" width="48" height="88" rx="20" fill="#7C2D12"/>
+              <circle cx="186" cy="142" r="3.5" fill="#FFB81C"/>
+              <rect x="118" y="70" width="104" height="20" rx="10" fill="#131E1A"/><text x="170" y="84" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" letter-spacing="2" fill="#F6F3EC">COLLEGE</text>
+              <rect x="30" y="182" width="280" height="10" rx="5" fill="#0E5E4A" opacity=".28"/>
+            </svg>
+          </div>
+          <div class="j-trees j-tree-l" id="jTreeL">🌳</div>
+          <div class="j-trees j-tree-r" id="jTreeR">🌳</div>
+          <div class="j-ground"></div>
+          <div class="j-path"></div>
+          <span class="j-spark" id="jSpark1" style="left:24%;bottom:58%">✦</span>
+          <span class="j-spark" id="jSpark2" style="right:23%;bottom:62%;color:#FF5A2D">✦</span>
+          <span class="j-spark" id="jSpark3" style="left:50%;bottom:72%;color:#FFB81C">★</span>
+          <div class="j-gates">
+            <div class="j-sign">Your campus gate</div>
+            <div class="j-pillar j-pillar-l"></div><div class="j-pillar j-pillar-r"></div>
+            <div class="j-gate j-gate-l" id="jGateL"></div><div class="j-gate j-gate-r" id="jGateR"></div>
+          </div>
+          <div class="j-person j-friend-1" id="jFriend1"><div class="j-avatar" style="background:#FF5A2D">SK</div><span class="j-name">Sana · CSE</span></div>
+          <div class="j-person j-friend-2" id="jFriend2"><div class="j-avatar" style="background:#7C3AED">RM</div><span class="j-name">Rohan · ECE</span></div>
+          <div class="j-person j-friend-3" id="jFriend3"><div class="j-avatar" style="background:#0EA5E9">MP</div><span class="j-name">Meera · MBBS</span></div>
+          <div class="j-person j-you" id="jYou"><div class="j-avatar" style="background:#0E5E4A">YOU</div><span class="j-bag">🎒</span><span class="j-name">You arrive</span></div>
+          <div class="j-bubble j-bubble-1" id="jBubble1">Hey! You’re new here? 👋</div>
+          <div class="j-bubble j-bubble-2" id="jBubble2">Same college! Let’s connect 🎉</div>
+          <div class="j-bubble j-bubble-3" id="jBubble3">☕ Canteen at 4? First friend made!</div>
+        </div>
+
+        <div class="j-caption-box" aria-live="polite">
+          <div class="j-caption active" data-jcaption="0"><b>1 · You reach your college</b><span>Keep swiping down — you move closer to the campus gate.</span></div>
+          <div class="j-caption" data-jcaption="1"><b>2 · The gates swing open</b><span>Your college, your city, your people — waiting just inside.</span></div>
+          <div class="j-caption" data-jcaption="2"><b>3 · You walk in &amp; friends come to you</b><span>Sana, Rohan and Meera share your campus and your interests.</span></div>
+          <div class="j-caption" data-jcaption="3"><b>4 · That’s how UniCircle feels ✨</b><span>Now do it for real — create your account and send your first hello. <button type="button" class="link-btn" onclick="scrollToSignup()">Create account ↑</button></span></div>
+        </div>
+        <div class="j-progress"><span class="j-scene-label" id="journeyLabel">Scene 1 of 4 · Arriving</span><div class="j-progress-track"><i id="journeyBar"></i></div><div class="j-dots" id="journeyDots"><i class="on"></i><i></i><i></i><i></i></div></div>
+      </div>
+    </section>
+
+    <div class="marquee-band" data-reveal aria-label="Colleges on UniCircle">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+    <button type="button" class="scroll-cue" data-reveal onclick="scrollToSignup()">Create your account<span class="cue-arrow" aria-hidden="true">↓</span></button>
+  </div>
+</main>
+
+<!-- ========== ONBOARDING VIEW ========== -->
+<main id="onboardView" class="hidden">
+  <div class="wrap">
+    <div class="progress">
+      <div class="steps">
+        <div class="step-dot"><label><span>1 · College & location</span><span id="stepLabel1">Now</span></label><div class="bar"><i id="bar1" style="width:100%"></i></div></div>
+        <div class="step-dot"><label><span>2 · Your vibe</span><span id="stepLabel2"></span></label><div class="bar"><i id="bar2" style="width:0%"></i></div></div>
+        <div class="step-dot"><label><span>3 · Preview</span><span id="stepLabel3"></span></label><div class="bar"><i id="bar3" style="width:0%"></i></div></div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <section class="card onboard-card" id="onboardStep1">
+      <h2 style="margin:0;font-size:26px;letter-spacing:-.02em">Where do you study?</h2>
+      <p class="hint" style="margin-top:6px">Colleges from <b>all over India</b> are listed — Diploma / Polytechnic, BTech / Engineering, Medical and Universities in every state &amp; UT. Search by college, city or state, or filter by type. We’ll prioritise people from your college, then expand to your city.</p>
+      <div class="type-filters" id="collegeTypeFilters">
+        <button type="button" class="active" data-ctype="all" onclick="setCollegeTypeFilter(this)">All colleges</button>
+        <button type="button" data-ctype="BTech / Engineering" onclick="setCollegeTypeFilter(this)">BTech / Engineering</button>
+        <button type="button" data-ctype="Diploma / Polytechnic" onclick="setCollegeTypeFilter(this)">Diploma / Polytechnic</button>
+        <button type="button" data-ctype="Medical" onclick="setCollegeTypeFilter(this)">Medical</button>
+        <button type="button" data-ctype="University / Degree" onclick="setCollegeTypeFilter(this)">University / Degree</button>
+      </div>
+      <label class="label">Search your college, city or state</label>
+      <div class="search-wrap"><span class="search-ico">🔍</span><input class="input" id="collegeSearch" placeholder="Try: Sri Venkateswara, Tirupati, AIIMS, Polytechnic, IIT, Mumbai…" oninput="renderColleges()"></div>
+      <p class="hint" id="collegeCountHint" style="margin-top:8px"></p>
+      <div class="college-grid" id="collegeGrid"></div>
+
+      <div style="margin-top:22px;border:1.5px dashed var(--line);border-radius:16px;padding:18px;background:var(--bg)">
+        <h3 style="margin:0;font-size:16px">Can’t find your college? Search the map &amp; add it 👇</h3>
+        <p class="hint" style="margin-top:4px">Every college in India is welcome — Diploma, BTech, Medical, government, private, deemed or local. Enter the name + city + state, tap “Search on map” to verify the correct college for that place, then add it.</p>
+        <label class="label" for="customCollegeType">College type *</label>
+        <select class="input" id="customCollegeType"><option value="BTech / Engineering">BTech / Engineering</option><option value="Diploma / Polytechnic">Diploma / Polytechnic</option><option value="Medical">Medical</option><option value="University / Degree">University / Degree / Arts &amp; Science</option></select>
+        <label class="label" for="customCollegeName">Your college name *</label>
+        <input class="input" id="customCollegeName" placeholder="e.g. Sri Venkateswara University, SV Govt Polytechnic Tirupati…" oninput="updateMapsLinks()">
+        <div class="grid2" style="margin-top:4px">
+          <div><label class="label" for="customCollegeCity">City where your college is *</label><input class="input" id="customCollegeCity" placeholder="e.g. Tirupati, Lucknow, Kochi, Indore…" oninput="updateMapsLinks()"></div>
+          <div><label class="label" for="customCollegeState">State / UT *</label><select class="input" id="customCollegeState" onchange="updateMapsLinks()"></select></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="btn btn-ghost btn-sm" type="button" onclick="searchCustomOnMap(true)">📍 Search on map</button>
+          <a class="map-link" id="customGoogleMapsLink" href="https://www.google.com/maps/search/?api=1&query=college+India" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+        </div>
+        <p class="hint" id="customMapStatus" style="margin-top:8px"></p>
+        <div class="map-results" id="customMapResults"></div>
+        <p class="hint" id="customCollegeError" style="color:#DC2626;display:none;margin-top:8px"></p>
+        <button class="btn btn-accent btn-block" style="margin-top:14px" type="button" onclick="addCustomCollege()">+ Add my college &amp; select it</button>
+        <p class="hint" style="margin-top:8px;text-align:center">Once added, your college is selected automatically and students from your city will show first.</p>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div><label class="label">Course / Branch</label><input class="input" id="courseInput" value="B.Tech CSE" placeholder="e.g. B.Tech CSE, B.Com, MBA"></div>
+        <div><label class="label">Year</label><select class="input" id="yearSelect"><option>1st year</option><option selected>2nd year</option><option>3rd year</option><option>4th year</option><option>Postgrad</option></select></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn btn-primary" style="flex:1" onclick="goOnboard(2)" id="toStep2Btn" disabled>Continue → Add interests</button></div>
+      <p class="hint" id="selectedCollegeHint" style="margin-top:10px">Select a college above to continue.</p>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="card onboard-card hidden" id="onboardStep2">
+      <h2 style="margin:0;font-size:26px;letter-spacing:-.02em">What are you into?</h2>
+      <p class="hint" style="margin-top:6px">Pick at least 3 — we highlight mutual interests on every profile so starting a chat feels easy.</p>
+      <label class="label">Interests <span id="interestCount" style="color:var(--brand)">0 selected</span></label>
+      <div class="chip-grid" id="interestGrid"></div>
+      <label class="label" style="margin-top:20px">I’m looking for</label>
+      <div class="chip-grid" id="lookingGrid"></div>
+      <label class="label">Short bio</label>
+      <textarea class="input" id="bioInput" placeholder="One line that sounds like you…">2nd year CSE, loves late-night coding, football on weekends and hunting for the best biryani near campus.</textarea>
+      <div style="display:flex;gap:10px;margin-top:20px"><button class="btn btn-ghost" onclick="goOnboard(1)">← Back</button><button class="btn btn-primary" style="flex:1" onclick="goOnboard(3)">Preview my profile →</button></div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="card onboard-card hidden" id="onboardStep3">
+      <h2 style="margin:0;font-size:26px;letter-spacing:-.02em">You’re ready to meet people 👋</h2>
+      <p class="hint" style="margin-top:6px">This is how you’ll appear to others. Looking good?</p>
+      <div id="profilePreview" style="margin-top:16px"></div>
+      <div style="display:flex;gap:10px;margin-top:20px"><button class="btn btn-ghost" onclick="goOnboard(2)">← Edit vibe</button><button class="btn btn-accent" style="flex:1" onclick="finishOnboarding()">Start discovering friends →</button></div>
+    </section>
+  </div>
+</main>
+
+<!-- ========== APP VIEW ========== -->
+<main id="appView" class="hidden">
+  <div class="wrap">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="card">
+          <div class="profile-mini">
+            <div class="avatar" id="sideAvatar" style="background:#0E5E4A">AR<span class="online-dot"></span></div>
+            <div><b id="sideName" style="display:block;font-size:15px">Aarav Reddy</b><span id="sideMeta" style="font-size:12px;color:var(--muted)">IIIT Hyderabad • 2nd year</span></div>
+          </div>
+          <div style="padding:0 12px 12px">
+            <nav class="navlist">
+              <button data-nav="discover" class="active" onclick="showSection('discover')">🔍 Discover <span class="badge" id="discoverBadge">12</span></button>
+              <button data-nav="connections" onclick="showSection('connections')">🤝 Connections <span class="badge" id="connBadge" style="background:var(--surface2);color:var(--ink)">3</span></button>
+              <button data-nav="messages" onclick="showSection('messages')">💬 Messages <span class="badge" id="msgBadge">2</span></button>
+              <button data-nav="profile" onclick="showSection('profile')">👤 My Profile</button>
+            </nav>
+          </div>
+        </div>
+        <div class="side-card">
+          <h4>🎉 Campus tip</h4>
+          <p>People who send a first message within 10 minutes of connecting are 3× more likely to become real friends. Don’t overthink it — say hi!</p>
+          <button class="btn" style="background:#fff;color:#111;margin-top:12px;width:100%" onclick="showSection('messages')">Open chats</button>
+        </div>
+      </aside>
+
+      <div>
+        <!-- DISCOVER -->
+        <section id="section-discover">
+          <div class="hero-strip">
+            <div><h2 id="heroTitle">Good evening, Aarav</h2><p id="heroSub">Here are students from IIIT Hyderabad and nearby colleges in Hyderabad who share your interests.</p></div>
+            <div class="hero-stats"><div class="stat"><b id="statNearby">248</b><span>Nearby</span></div><div class="stat"><b id="statOnline">86</b><span>Online now</span></div><div class="stat"><b>12</b><span>New today</span></div></div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-wrap"><span class="search-ico">🔍</span><input class="input" id="peopleSearch" placeholder="Search by name, course, interest…" oninput="renderPeople()"></div>
+            <select class="select" id="yearFilter" onchange="renderPeople()"><option value="all">All years</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option></select>
+          </div>
+          <div class="filter-pills" id="scopeFilters">
+            <button class="active" data-scope="all" onclick="setScope(this)">All nearby</button>
+            <button data-scope="same-college" onclick="setScope(this)">Same college</button>
+            <button data-scope="same-city" onclick="setScope(this)">Same city</button>
+            <button data-scope="online" onclick="setScope(this)">Online now</button>
+            <button data-scope="mutual" onclick="setScope(this)">Most mutual interests</button>
+          </div>
+
+          <div class="people-grid" id="peopleGrid" style="margin-top:16px"></div>
+          <div id="peopleEmpty" class="empty hidden" style="margin-top:16px"><h3>No one matches that filter — yet</h3><p>Try “All nearby” or clear your search. New students join every day, especially at the start of term.</p><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="resetFilters()">Reset filters</button></div>
+        </section>
+
+        <!-- CONNECTIONS -->
+        <section id="section-connections" class="hidden">
+          <div class="section-head"><div><h2>Your connections</h2><p>People you’ve connected with and requests waiting for you.</p></div><button class="btn btn-ghost btn-sm" onclick="showSection('discover')">+ Find more</button></div>
+          <h3 style="margin:18px 0 10px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Requests for you · <span id="reqCount">2</span></h3>
+          <div class="conn-list" id="requestsList"></div>
+          <h3 style="margin:22px 0 10px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Connected · <span id="connectedCount">0</span></h3>
+          <div class="conn-list" id="connectionsList"></div>
+        </section>
+
+        <!-- MESSAGES -->
+        <section id="section-messages" class="hidden">
+          <div class="section-head"><div><h2>Messages</h2><p>Your campus conversations — be yourself, keep it kind.</p></div></div>
+          <div class="chat-layout">
+            <div class="card chat-list">
+              <div class="chat-list-head"><h3>Inbox</h3><p class="hint" style="margin:4px 0 0">Tap a person to chat. Replies are simulated in this demo.</p></div>
+              <div class="chat-items" id="chatList"></div>
+            </div>
+            <div class="card chat-window" id="chatWindow">
+              <div class="chat-head" id="chatHead"></div>
+              <div class="messages" id="messagesBox"></div>
+              <div class="quick-replies" id="quickReplies"></div>
+              <form class="chat-input" onsubmit="sendMessage(event)"><input class="input" id="chatInput" placeholder="Message… say something real, not just ‘hi’" autocomplete="off"><button class="btn btn-primary" type="submit">Send →</button></form>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="section-profile" class="hidden">
+          <div class="section-head"><div><h2>My profile</h2><p>This is what other students see when they find you.</p></div></div>
+          <div id="myProfileCard"></div>
+          <div class="card" style="padding:20px;margin-top:16px">
+            <h3 style="margin:0 0 6px">Profile strength: 92%</h3>
+            <p class="hint">Add a bio and 3+ interests to get 2× more connections. You’re almost there.</p>
+            <div class="bar" style="margin-top:12px"><i style="width:92%"></i></div>
+            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="startOnboarding()">Edit college & interests</button><button class="btn btn-ghost btn-sm" onclick="showToast('Visibility set to: Students in my city ✓')">Visibility: My city</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div class="wrap"><div class="footer">UniCircle — College Friend Finder · Demo experience with sample students. No data leaves your browser tab. Made for students, by students.</div></div>
+</main>
+
+<nav class="mobile-nav" id="mobileNav" style="display:none">
+  <button data-nav="discover" class="active" onclick="showSection('discover')">🔍<span>Discover</span></button>
+  <button data-nav="connections" onclick="showSection('connections')">🤝<span>Connects</span></button>
+  <button data-nav="messages" onclick="showSection('messages')">💬<span>Chats</span></button>
+  <button data-nav="profile" onclick="showSection('profile')">👤<span>Profile</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const INDIAN_STATES = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'];
+const COLLEGES = [
+  {id:'iiith', name:'IIIT Hyderabad', city:'Hyderabad', state:'Telangana', color:'#0E5E4A', short:'IIIT'},
+  {id:'iith', name:'IIT Hyderabad', city:'Hyderabad', state:'Telangana', color:'#B45309', short:'IIT-H'},
+  {id:'ou', name:'Osmania University', city:'Hyderabad', state:'Telangana', color:'#7C2D12', short:'OU'},
+  {id:'jntuh', name:'JNTU Hyderabad', city:'Hyderabad', state:'Telangana', color:'#1D4ED8', short:'JNTU'},
+  {id:'gitam-hyd', name:'GITAM Hyderabad', city:'Hyderabad', state:'Telangana', color:'#0F766E', short:'GITAM'},
+  {id:'uoh', name:'University of Hyderabad', city:'Hyderabad', state:'Telangana', color:'#6D28D9', short:'UoH'},
+  {id:'nitw', name:'NIT Warangal', city:'Warangal', state:'Telangana', color:'#0F766E', short:'NITW'},
+  {id:'vit', name:'VIT Vellore', city:'Vellore', state:'Tamil Nadu', color:'#7C3AED', short:'VIT'},
+  {id:'srm', name:'SRM University', city:'Chennai', state:'Tamil Nadu', color:'#DC2626', short:'SRM'},
+  {id:'iitm', name:'IIT Madras', city:'Chennai', state:'Tamil Nadu', color:'#991B1B', short:'IIT-M'},
+  {id:'anna', name:'Anna University', city:'Chennai', state:'Tamil Nadu', color:'#9D174D', short:'AU'},
+  {id:'nitt', name:'NIT Tiruchirappalli', city:'Tiruchirappalli', state:'Tamil Nadu', color:'#1E40AF', short:'NITT'},
+  {id:'psg', name:'PSG College of Technology', city:'Coimbatore', state:'Tamil Nadu', color:'#065F46', short:'PSG'},
+  {id:'du', name:'Delhi University', city:'Delhi', state:'Delhi', color:'#111827', short:'DU'},
+  {id:'iitd', name:'IIT Delhi', city:'Delhi', state:'Delhi', color:'#065F46', short:'IIT-D'},
+  {id:'dtu', name:'Delhi Technological University', city:'Delhi', state:'Delhi', color:'#B91C1C', short:'DTU'},
+  {id:'jnu', name:'Jawaharlal Nehru University', city:'Delhi', state:'Delhi', color:'#7C2D12', short:'JNU'},
+  {id:'jamia', name:'Jamia Millia Islamia', city:'Delhi', state:'Delhi', color:'#166534', short:'JMI'},
+  {id:'iitb', name:'IIT Bombay', city:'Mumbai', state:'Maharashtra', color:'#1E3A8A', short:'IIT-B'},
+  {id:'mu', name:'University of Mumbai', city:'Mumbai', state:'Maharashtra', color:'#7C3AED', short:'MU'},
+  {id:'vjti', name:'VJTI Mumbai', city:'Mumbai', state:'Maharashtra', color:'#9A3412', short:'VJTI'},
+  {id:'xaviers-mum', name:'St. Xavier’s College Mumbai', city:'Mumbai', state:'Maharashtra', color:'#334155', short:'SXC'},
+  {id:'coep', name:'COEP Technological University', city:'Pune', state:'Maharashtra', color:'#0E7490', short:'COEP'},
+  {id:'sppu', name:'Savitribai Phule Pune University', city:'Pune', state:'Maharashtra', color:'#A16207', short:'SPPU'},
+  {id:'vnit', name:'VNIT Nagpur', city:'Nagpur', state:'Maharashtra', color:'#155E75', short:'VNIT'},
+  {id:'iisc', name:'IISc Bengaluru', city:'Bengaluru', state:'Karnataka', color:'#111827', short:'IISc'},
+  {id:'iiitb', name:'IIIT Bengaluru', city:'Bengaluru', state:'Karnataka', color:'#0E5E4A', short:'IIITB'},
+  {id:'rvce', name:'RV College of Engineering', city:'Bengaluru', state:'Karnataka', color:'#B45309', short:'RVCE'},
+  {id:'christ', name:'Christ University', city:'Bengaluru', state:'Karnataka', color:'#1D4ED8', short:'CU'},
+  {id:'manipal', name:'Manipal University', city:'Manipal', state:'Karnataka', color:'#854D0E', short:'MU'},
+  {id:'nitk', name:'NIT Surathkal', city:'Mangaluru', state:'Karnataka', color:'#065F46', short:'NITK'},
+  {id:'jadavpur', name:'Jadavpur University', city:'Kolkata', state:'West Bengal', color:'#991B1B', short:'JU'},
+  {id:'cu-kol', name:'University of Calcutta', city:'Kolkata', state:'West Bengal', color:'#7C2D12', short:'CU'},
+  {id:'iitkgp', name:'IIT Kharagpur', city:'Kharagpur', state:'West Bengal', color:'#334155', short:'IIT-KGP'},
+  {id:'nitdgp', name:'NIT Durgapur', city:'Durgapur', state:'West Bengal', color:'#0F766E', short:'NITD'},
+  {id:'iitk', name:'IIT Kanpur', city:'Kanpur', state:'Uttar Pradesh', color:'#1E40AF', short:'IIT-K'},
+  {id:'bhu', name:'Banaras Hindu University', city:'Varanasi', state:'Uttar Pradesh', color:'#B45309', short:'BHU'},
+  {id:'amu', name:'Aligarh Muslim University', city:'Aligarh', state:'Uttar Pradesh', color:'#166534', short:'AMU'},
+  {id:'mnnit', name:'MNNIT Allahabad', city:'Prayagraj', state:'Uttar Pradesh', color:'#7C3AED', short:'MNNIT'},
+  {id:'amity-noida', name:'Amity University Noida', city:'Noida', state:'Uttar Pradesh', color:'#B91C1C', short:'AU'},
+  {id:'lucknow-univ', name:'University of Lucknow', city:'Lucknow', state:'Uttar Pradesh', color:'#9D174D', short:'LU'},
+  {id:'iitg', name:'IIT Guwahati', city:'Guwahati', state:'Assam', color:'#0E7490', short:'IIT-G'},
+  {id:'gu', name:'Gauhati University', city:'Guwahati', state:'Assam', color:'#065F46', short:'GU'},
+  {id:'tezpur', name:'Tezpur University', city:'Tezpur', state:'Assam', color:'#854D0E', short:'TU'},
+  {id:'nehu', name:'North-Eastern Hill University', city:'Shillong', state:'Meghalaya', color:'#155E75', short:'NEHU'},
+  {id:'cusat', name:'Cochin University (CUSAT)', city:'Kochi', state:'Kerala', color:'#1D4ED8', short:'CUSAT'},
+  {id:'kerala-univ', name:'University of Kerala', city:'Thiruvananthapuram', state:'Kerala', color:'#7C2D12', short:'KU'},
+  {id:'nitc', name:'NIT Calicut', city:'Kozhikode', state:'Kerala', color:'#991B1B', short:'NITC'},
+  {id:'iitgn', name:'IIT Gandhinagar', city:'Gandhinagar', state:'Gujarat', color:'#334155', short:'IIT-GN'},
+  {id:'nirma', name:'Nirma University', city:'Ahmedabad', state:'Gujarat', color:'#B45309', short:'NU'},
+  {id:'gujarat-univ', name:'Gujarat University', city:'Ahmedabad', state:'Gujarat', color:'#0F766E', short:'GU'},
+  {id:'msu', name:'Maharaja Sayajirao University', city:'Vadodara', state:'Gujarat', color:'#6D28D9', short:'MSU'},
+  {id:'iiti', name:'IIT Indore', city:'Indore', state:'Madhya Pradesh', color:'#065F46', short:'IIT-I'},
+  {id:'manit', name:'MANIT Bhopal', city:'Bhopal', state:'Madhya Pradesh', color:'#B91C1C', short:'MANIT'},
+  {id:'iitbbs', name:'IIT Bhubaneswar', city:'Bhubaneswar', state:'Odisha', color:'#0E7490', short:'IIT-BBS'},
+  {id:'kiit', name:'KIIT University', city:'Bhubaneswar', state:'Odisha', color:'#166534', short:'KIIT'},
+  {id:'nitrkl', name:'NIT Rourkela', city:'Rourkela', state:'Odisha', color:'#7C3AED', short:'NITR'},
+  {id:'pu-chd', name:'Panjab University', city:'Chandigarh', state:'Chandigarh', color:'#991B1B', short:'PU'},
+  {id:'thapar', name:'Thapar Institute', city:'Patiala', state:'Punjab', color:'#1E40AF', short:'TIET'},
+  {id:'lpu', name:'Lovely Professional University', city:'Phagwara', state:'Punjab', color:'#DC2626', short:'LPU'},
+  {id:'cu-mohali', name:'Chandigarh University', city:'Mohali', state:'Punjab', color:'#0E5E4A', short:'CU'},
+  {id:'mnit', name:'MNIT Jaipur', city:'Jaipur', state:'Rajasthan', color:'#B45309', short:'MNIT'},
+  {id:'manipal-jaipur', name:'Manipal University Jaipur', city:'Jaipur', state:'Rajasthan', color:'#9D174D', short:'MUJ'},
+  {id:'bits-pilani', name:'BITS Pilani', city:'Pilani', state:'Rajasthan', color:'#334155', short:'BITS'},
+  {id:'bits', name:'BITS Pilani — Hyderabad', city:'Hyderabad', state:'Telangana', color:'#475569', short:'BITS-H'},
+  {id:'bits-goa', name:'BITS Pilani — Goa', city:'Goa', state:'Goa', color:'#0F766E', short:'BITS-G'},
+  {id:'goa-univ', name:'Goa University', city:'Panaji', state:'Goa', color:'#7C2D12', short:'GU'},
+  {id:'iit-patna', name:'IIT Patna', city:'Patna', state:'Bihar', color:'#065F46', short:'IIT-P'},
+  {id:'nit-patna', name:'NIT Patna', city:'Patna', state:'Bihar', color:'#B91C1C', short:'NITP'},
+  {id:'bit-mesra', name:'BIT Mesra', city:'Ranchi', state:'Jharkhand', color:'#1D4ED8', short:'BIT'},
+  {id:'iit-ism', name:'IIT (ISM) Dhanbad', city:'Dhanbad', state:'Jharkhand', color:'#111827', short:'ISM'},
+  {id:'nit-raipur', name:'NIT Raipur', city:'Raipur', state:'Chhattisgarh', color:'#854D0E', short:'NITRR'},
+  {id:'au-vizag', name:'Andhra University', city:'Visakhapatnam', state:'Andhra Pradesh', color:'#0E7490', short:'AU'},
+  {id:'iit-tirupati', name:'IIT Tirupati', city:'Tirupati', state:'Andhra Pradesh', color:'#7C3AED', short:'IIT-TPT'},
+  {id:'iitr', name:'IIT Roorkee', city:'Roorkee', state:'Uttarakhand', color:'#166534', short:'IIT-R'},
+  {id:'iit-mandi', name:'IIT Mandi', city:'Mandi', state:'Himachal Pradesh', color:'#155E75', short:'IIT-Mandi'},
+  {id:'kashmir-univ', name:'University of Kashmir', city:'Srinagar', state:'Jammu and Kashmir', color:'#334155', short:'KU'},
+  {id:'jammu-univ', name:'University of Jammu', city:'Jammu', state:'Jammu and Kashmir', color:'#9A3412', short:'JU'},
+  {id:'sikkim-manipal', name:'Sikkim Manipal University', city:'Gangtok', state:'Sikkim', color:'#065F46', short:'SMU'},
+  {id:'tripura-univ', name:'Tripura University', city:'Agartala', state:'Tripura', color:'#B45309', short:'TU'},
+  {id:'manipur-univ', name:'Manipur University', city:'Imphal', state:'Manipur', color:'#7C2D12', short:'MU'},
+  {id:'mizoram-univ', name:'Mizoram University', city:'Aizawl', state:'Mizoram', color:'#0F766E', short:'MZU'},
+  {id:'nagaland-univ', name:'Nagaland University', city:'Kohima', state:'Nagaland', color:'#6D28D9', short:'NU'},
+  /* — Tirupati / SV University fix + Andhra Pradesh — */
+  {id:'sv-univ-tirupati', name:'Sri Venkateswara University', city:'Tirupati', state:'Andhra Pradesh', color:'#7C2D12', short:'SVU', type:'University / Degree', aliases:['SV University','SVU','Sri Venka','Sri Venkateswara']},
+  {id:'sv-medical-tirupati', name:'Sri Venkateswara Medical College', city:'Tirupati', state:'Andhra Pradesh', color:'#991B1B', short:'SVMC', type:'Medical', aliases:['SV Medical College','SVMC Tirupati']},
+  {id:'sv-polytechnic-tirupati', name:'Sri Venkateswara Govt Polytechnic Tirupati', city:'Tirupati', state:'Andhra Pradesh', color:'#0F766E', short:'SVGP', type:'Diploma / Polytechnic', aliases:['SV Polytechnic','SV Govt Polytechnic']},
+  {id:'sri-padma-tirupati', name:'Sri Padmavati Mahila Visvavidyalayam', city:'Tirupati', state:'Andhra Pradesh', color:'#9D174D', short:'SPMVV', type:'University / Degree'},
+  {id:'jntu-anantapur', name:'JNTU Anantapur', city:'Anantapur', state:'Andhra Pradesh', color:'#1D4ED8', short:'JNTUA', type:'BTech / Engineering'},
+  {id:'jntu-kakinada', name:'JNTU Kakinada', city:'Kakinada', state:'Andhra Pradesh', color:'#065F46', short:'JNTUK', type:'BTech / Engineering'},
+  {id:'andhra-medical-vizag', name:'Andhra Medical College', city:'Visakhapatnam', state:'Andhra Pradesh', color:'#991B1B', short:'AMC', type:'Medical'},
+  {id:'govt-poly-vijayawada', name:'Government Polytechnic Vijayawada', city:'Vijayawada', state:'Andhra Pradesh', color:'#334155', short:'GPV', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-vizag', name:'Government Polytechnic Visakhapatnam', city:'Visakhapatnam', state:'Andhra Pradesh', color:'#0E7490', short:'GP-VZG', type:'Diploma / Polytechnic'},
+  /* — Medical colleges across India — */
+  {id:'aiims-delhi', name:'AIIMS New Delhi', city:'Delhi', state:'Delhi', color:'#991B1B', short:'AIIMS', type:'Medical', aliases:['AIIMS Delhi','All India Institute of Medical Sciences']},
+  {id:'aiims-bibinagar', name:'AIIMS Bibinagar', city:'Hyderabad', state:'Telangana', color:'#B91C1C', short:'AIIMS-H', type:'Medical'},
+  {id:'aiims-bhubaneswar', name:'AIIMS Bhubaneswar', city:'Bhubaneswar', state:'Odisha', color:'#7C2D12', short:'AIIMS-BBS', type:'Medical'},
+  {id:'aiims-patna', name:'AIIMS Patna', city:'Patna', state:'Bihar', color:'#065F46', short:'AIIMS-P', type:'Medical'},
+  {id:'aiims-raipur', name:'AIIMS Raipur', city:'Raipur', state:'Chhattisgarh', color:'#1E40AF', short:'AIIMS-R', type:'Medical'},
+  {id:'cmc-vellore', name:'Christian Medical College Vellore', city:'Vellore', state:'Tamil Nadu', color:'#166534', short:'CMC', type:'Medical', aliases:['CMC Vellore']},
+  {id:'jipmer', name:'JIPMER Puducherry', city:'Puducherry', state:'Puducherry', color:'#7C3AED', short:'JIPMER', type:'Medical'},
+  {id:'mamc-delhi', name:'Maulana Azad Medical College', city:'Delhi', state:'Delhi', color:'#B45309', short:'MAMC', type:'Medical'},
+  {id:'kgmu-lucknow', name:'King George’s Medical University', city:'Lucknow', state:'Uttar Pradesh', color:'#9D174D', short:'KGMU', type:'Medical'},
+  {id:'osmania-medical-hyd', name:'Osmania Medical College', city:'Hyderabad', state:'Telangana', color:'#334155', short:'OMC', type:'Medical'},
+  {id:'gandhi-medical-hyd', name:'Gandhi Medical College', city:'Hyderabad', state:'Telangana', color:'#0F766E', short:'GMC-H', type:'Medical'},
+  {id:'madras-medical', name:'Madras Medical College', city:'Chennai', state:'Tamil Nadu', color:'#991B1B', short:'MMC', type:'Medical'},
+  {id:'stanley-medical', name:'Government Stanley Medical College', city:'Chennai', state:'Tamil Nadu', color:'#1D4ED8', short:'SMC', type:'Medical'},
+  {id:'bj-medical-ahmedabad', name:'B. J. Medical College Ahmedabad', city:'Ahmedabad', state:'Gujarat', color:'#854D0E', short:'BJMC', type:'Medical'},
+  {id:'seth-gs-mumbai', name:'Seth G.S. Medical College (KEM)', city:'Mumbai', state:'Maharashtra', color:'#065F46', short:'KEM', type:'Medical'},
+  {id:'afmc-pune', name:'Armed Forces Medical College', city:'Pune', state:'Maharashtra', color:'#111827', short:'AFMC', type:'Medical'},
+  {id:'kasturba-manipal', name:'Kasturba Medical College Manipal', city:'Manipal', state:'Karnataka', color:'#B91C1C', short:'KMC', type:'Medical'},
+  {id:'calcutta-medical', name:'Medical College Kolkata', city:'Kolkata', state:'West Bengal', color:'#7C2D12', short:'MCK', type:'Medical'},
+  {id:'govt-medical-kozhikode', name:'Government Medical College Kozhikode', city:'Kozhikode', state:'Kerala', color:'#0E7490', short:'GMC-K', type:'Medical'},
+  {id:'govt-medical-tvm', name:'Government Medical College Thiruvananthapuram', city:'Thiruvananthapuram', state:'Kerala', color:'#6D28D9', short:'GMC-T', type:'Medical'},
+  {id:'scb-cuttack', name:'SCB Medical College Cuttack', city:'Cuttack', state:'Odisha', color:'#155E75', short:'SCB', type:'Medical'},
+  /* — Diploma / Polytechnic across India — */
+  {id:'govt-poly-hyd', name:'Government Polytechnic Hyderabad (Masab Tank)', city:'Hyderabad', state:'Telangana', color:'#0E5E4A', short:'GPH', type:'Diploma / Polytechnic', aliases:['Govt Polytechnic Hyderabad','GPT Hyderabad']},
+  {id:'govt-poly-mumbai', name:'Government Polytechnic Mumbai', city:'Mumbai', state:'Maharashtra', color:'#1E3A8A', short:'GPM', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-pune', name:'Government Polytechnic Pune', city:'Pune', state:'Maharashtra', color:'#0E7490', short:'GPP', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-bengaluru', name:'Government Polytechnic Bengaluru', city:'Bengaluru', state:'Karnataka', color:'#B45309', short:'GPB', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-chennai-cpt', name:'Central Polytechnic College Chennai', city:'Chennai', state:'Tamil Nadu', color:'#DC2626', short:'CPC', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-delhi', name:'Guru Nanak Dev Institute of Technology (Polytechnic) Delhi', city:'Delhi', state:'Delhi', color:'#065F46', short:'GNDIT', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-lucknow', name:'Government Polytechnic Lucknow', city:'Lucknow', state:'Uttar Pradesh', color:'#9D174D', short:'GPL', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-kanpur', name:'Government Polytechnic Kanpur', city:'Kanpur', state:'Uttar Pradesh', color:'#1E40AF', short:'GPK', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-kolkata', name:'Government Polytechnic Kolkata', city:'Kolkata', state:'West Bengal', color:'#991B1B', short:'GP-KOL', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-kochi', name:'Government Polytechnic College Kalamassery Kochi', city:'Kochi', state:'Kerala', color:'#1D4ED8', short:'GPC-K', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-jaipur', name:'Government Polytechnic College Jaipur', city:'Jaipur', state:'Rajasthan', color:'#B45309', short:'GPC-J', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-indore', name:'Government Polytechnic College Indore', city:'Indore', state:'Madhya Pradesh', color:'#065F46', short:'GPC-I', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-patna', name:'Government Polytechnic Patna', city:'Patna', state:'Bihar', color:'#B91C1C', short:'GP-PAT', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-guwahati', name:'Assam Engineering Institute (Polytechnic) Guwahati', city:'Guwahati', state:'Assam', color:'#0E7490', short:'AEI', type:'Diploma / Polytechnic'},
+  {id:'govt-poly-ahmedabad', name:'Government Polytechnic Ahmedabad', city:'Ahmedabad', state:'Gujarat', color:'#0F766E', short:'GPA', type:'Diploma / Polytechnic'},
+  /* — More BTech / Engineering — */
+  {id:'nit-warangal-btech', name:'Sri Vishnu / SVEC Tirupati — Sri Venkateswara College of Engineering Tirupati', city:'Tirupati', state:'Andhra Pradesh', color:'#2563EB', short:'SVCE', type:'BTech / Engineering', aliases:['SV College of Engineering Tirupati','SVEC Tirupati']},
+  {id:'mohan-babu-univ', name:'Mohan Babu University', city:'Tirupati', state:'Andhra Pradesh', color:'#7C3AED', short:'MBU', type:'University / Degree', aliases:['Sree Vidyanikethan Tirupati']},
+  {id:'iiit-sricity', name:'IIIT Sri City', city:'Sri City', state:'Andhra Pradesh', color:'#0E5E4A', short:'IIIT-SC', type:'BTech / Engineering'},
+  {id:'vit-ap', name:'VIT-AP University', city:'Amaravati', state:'Andhra Pradesh', color:'#7C3AED', short:'VIT-AP', type:'BTech / Engineering'},
+  {id:'srm-ap', name:'SRM University AP', city:'Amaravati', state:'Andhra Pradesh', color:'#DC2626', short:'SRM-AP', type:'BTech / Engineering'},
+];
+const ALL_INTERESTS = ['Coding','Football','Music','Photography','Startups','Design','Gaming','Reading','Fitness','Dance','Movies','Cricket','AI / ML','Foodie','Travel','Anime','Debate','Robotics'];
+const LOOKING_FOR = ['Study buddy','Project partner','Sports buddy','Hostel friend','Startup co-founder','Just hang out','Language exchange','Gym partner'];
+
+const PEOPLE = [
+  {id:1, name:'Sneha Kulkarni', initials:'SK', color:'#FF5A2D', collegeId:'iiith', course:'B.Tech CSE', year:'2nd year', city:'Hyderabad', online:true, distance:'Same campus', match:96, bio:'Hackathon regular, Figma nerd, and always up for filter coffee + brainstorming startup ideas.', interests:['Coding','Design','Startups','Music'], looking:'Project partner'},
+  {id:2, name:'Rohan Mehta', initials:'RM', color:'#0EA5E9', collegeId:'iiith', course:'B.Tech ECE', year:'3rd year', city:'Hyderabad', online:true, distance:'0.4 km', match:92, bio:'ECE by day, football captain by evening. Looking for a solid study group for signals & systems.', interests:['Football','Coding','Fitness','Cricket'], looking:'Study buddy'},
+  {id:3, name:'Naina Pillai', initials:'NP', color:'#7C3AED', collegeId:'ou', course:'B.Sc Psychology', year:'2nd year', city:'Hyderabad', online:false, distance:'6.2 km', match:88, bio:'Book club host, Carnatic vocalist, and biryani critic. Let’s swap playlists and notes.', interests:['Reading','Music','Movies','Foodie'], looking:'Just hang out'},
+  {id:4, name:'Dev Malhotra', initials:'DM', color:'#111827', collegeId:'iith', course:'B.Tech AI', year:'2nd year', city:'Hyderabad', online:true, distance:'18 km', match:90, bio:'Building ML models for fun. Currently obsessed with LLMs, chess, and midnight Maggi.', interests:['AI / ML','Coding','Gaming','Anime'], looking:'Project partner'},
+  {id:5, name:'Ananya Iyer', initials:'AI', color:'#DB2777', collegeId:'iiith', course:'B.Tech CSE', year:'1st year', city:'Hyderabad', online:true, distance:'Same hostel block', match:94, bio:'New to campus and figuring it all out! Love dance, photography walks, and exploring Hyderabad.', interests:['Dance','Photography','Travel','Movies'], looking:'Hostel friend'},
+  {id:6, name:'Kabir Singh', initials:'KS', color:'#059669', collegeId:'jntuh', course:'B.Tech Mech', year:'3rd year', city:'Hyderabad', online:false, distance:'9.8 km', match:84, bio:'Robotics club lead. If it has wheels or wings, I’ve probably tried to build it.', interests:['Robotics','Coding','Fitness','Travel'], looking:'Project partner'},
+  {id:7, name:'Meera Joshi', initials:'MJ', color:'#D97706', collegeId:'bits', course:'B.E. EEE', year:'2nd year', city:'Hyderabad', online:true, distance:'12 km', match:87, bio:'Debate society, indie music, and very strong opinions about the best dosa in Hyderabad.', interests:['Debate','Music','Reading','Foodie'], looking:'Just hang out'},
+  {id:8, name:'Arjun Nair', initials:'AN', color:'#2563EB', collegeId:'gitam-hyd', course:'BBA', year:'1st year', city:'Hyderabad', online:false, distance:'7.5 km', match:81, bio:'Aspiring founder, runs a tiny thrift page. Looking for co-founders and cricket on Sundays.', interests:['Startups','Cricket','Fitness','Movies'], looking:'Startup co-founder'},
+  {id:9, name:'Ishita Verma', initials:'IV', color:'#9333EA', collegeId:'du', course:'BA English', year:'3rd year', city:'Delhi', online:true, distance:'Delhi', match:76, bio:'Poetry, old Delhi food walks, and film society screenings. Visiting Hyderabad next month!', interests:['Reading','Movies','Travel','Photography'], looking:'Just hang out'},
+  {id:10, name:'Vikram Rao', initials:'VR', color:'#0F766E', collegeId:'iiith', course:'MS CS', year:'Postgrad', city:'Hyderabad', online:true, distance:'Same campus', match:89, bio:'Research scholar in NLP. Happy to mentor juniors — or lose to you at table tennis.', interests:['AI / ML','Coding','Reading','Gaming'], looking:'Study buddy'},
+  {id:11, name:'Zoya Khan', initials:'ZK', color:'#BE185D', collegeId:'ou', course:'B.Com', year:'2nd year', city:'Hyderabad', online:true, distance:'5.1 km', match:85, bio:'Finance club, calligraphy, and hunting down the city’s best Irani chai. Let’s study together!', interests:['Design','Reading','Foodie','Travel'], looking:'Study buddy'},
+  {id:12, name:'Nikhil Desai', initials:'ND', color:'#475569', collegeId:'vit', course:'B.Tech IT', year:'4th year', city:'Vellore', online:false, distance:'Vellore', match:73, bio:'Final year, placement prep mode. Open-source contributor and Valorant enjoyer.', interests:['Coding','Gaming','Music','Startups'], looking:'Project partner'},
+  {id:13, name:'Priya Sharma', initials:'PS', color:'#DB2777', collegeId:'iitb', course:'B.Tech CSE', year:'2nd year', city:'Mumbai', online:true, distance:'Mumbai', match:82, bio:'Mumbai local, hackathons + street food tours. Looking for a study group for DSA.', interests:['Coding','Foodie','Music','Travel'], looking:'Study buddy'},
+  {id:14, name:'Aditya Kulkarni', initials:'AK', color:'#0EA5E9', collegeId:'coep', course:'B.Tech Mech', year:'3rd year', city:'Pune', online:true, distance:'Pune', match:80, bio:'Pune — robotics, trekking in the Sahyadris, and misal pav debates.', interests:['Robotics','Fitness','Travel','Coding'], looking:'Project partner'},
+  {id:15, name:'Tanvi Reddy', initials:'TR', color:'#7C3AED', collegeId:'christ', course:'BBA', year:'2nd year', city:'Bengaluru', online:true, distance:'Bengaluru', match:83, bio:'Bengaluru startup scene fangirl. Coffee, pitch nights and design sprints.', interests:['Startups','Design','Music','Foodie'], looking:'Startup co-founder'},
+  {id:16, name:'Soham Banerjee', initials:'SB', color:'#059669', collegeId:'jadavpur', course:'B.E. CSE', year:'2nd year', city:'Kolkata', online:false, distance:'Kolkata', match:79, bio:'Kolkata — adda, open source, and hunting for the best kathi roll near campus.', interests:['Coding','Reading','Movies','Football'], looking:'Study buddy'},
+  {id:17, name:'Keerthi Nair', initials:'KN', color:'#D97706', collegeId:'cusat', course:'B.Tech IT', year:'1st year', city:'Kochi', online:true, distance:'Kochi', match:78, bio:'New in Kochi, Kathakali to coding — curious about everything. Say hi!', interests:['Dance','Coding','Photography','Travel'], looking:'Hostel friend'},
+  {id:18, name:'Yash Jain', initials:'YJ', color:'#2563EB', collegeId:'mnit', course:'B.Tech ECE', year:'3rd year', city:'Jaipur', online:false, distance:'Jaipur', match:77, bio:'Jaipur — electronics, cricket evenings, and old-city food walks.', interests:['Coding','Cricket','Fitness','Foodie'], looking:'Sports buddy'},
+  {id:19, name:'Himangshu Das', initials:'HD', color:'#0F766E', collegeId:'iitg', course:'B.Tech AI', year:'2nd year', city:'Guwahati', online:true, distance:'Guwahati', match:81, bio:'Guwahati — ML, Assamese music, and Brahmaputra sunset walks.', interests:['AI / ML','Music','Travel','Gaming'], looking:'Project partner'},
+  {id:20, name:'Divya Menon', initials:'DM', color:'#BE185D', collegeId:'iitm', course:'B.Tech EE', year:'2nd year', city:'Chennai', online:true, distance:'Chennai', match:84, bio:'Chennai — circuits, Carnatic fusion, and Marina beach runs at sunrise.', interests:['Music','Fitness','Coding','Movies'], looking:'Just hang out'},
+  {id:21, name:'Charan Teja', initials:'CT', color:'#7C2D12', collegeId:'sv-univ-tirupati', course:'M.Sc Computer Science', year:'Postgrad', city:'Tirupati', online:true, distance:'Tirupati', match:88, bio:'SV University, Tirupati — research, Telugu cinema club and Alipiri evening walks.', interests:['Coding','Movies','Travel','Reading'], looking:'Study buddy'},
+  {id:22, name:'Harika Reddy', initials:'HR', color:'#991B1B', collegeId:'sv-medical-tirupati', course:'MBBS', year:'3rd year', city:'Tirupati', online:true, distance:'Tirupati', match:86, bio:'SV Medical College, Tirupati — anatomy study group, classical dance and hostel chai.', interests:['Reading','Dance','Music','Fitness'], looking:'Study buddy'},
+  {id:23, name:'Lokesh Naidu', initials:'LN', color:'#0F766E', collegeId:'sv-polytechnic-tirupati', course:'Diploma in ECE', year:'2nd year', city:'Tirupati', online:false, distance:'Tirupati', match:82, bio:'Diploma ECE at SV Govt Polytechnic, Tirupati — circuits, cricket and bike rides to Talakona.', interests:['Robotics','Cricket','Coding','Travel'], looking:'Project partner'},
+  {id:24, name:'Aisha Khan', initials:'AK2', color:'#166534', collegeId:'aiims-delhi', course:'MBBS', year:'2nd year', city:'Delhi', online:true, distance:'Delhi', match:85, bio:'AIIMS Delhi — physiology, poetry society and Old Delhi food breaks between postings.', interests:['Reading','Music','Foodie','Photography'], looking:'Just hang out'},
+  {id:25, name:'Imran Shaikh', initials:'IS', color:'#0E5E4A', collegeId:'govt-poly-hyd', course:'Diploma in CSE', year:'3rd year', city:'Hyderabad', online:true, distance:'Hyderabad', match:83, bio:'Govt Polytechnic Hyderabad, Masab Tank — diploma CSE, web dev and Irani cafe study sessions.', interests:['Coding','Gaming','Music','Startups'], looking:'Project partner'},
+];
+
+let state = {
+  user:{ name:'Aarav Reddy', email:'aarav@iiith.ac.in', collegeId:'iiith', course:'B.Tech CSE', year:'2nd year', interests:['Coding','Football','Music','Startups'], looking:['Study buddy','Project partner'], bio:'2nd year CSE, loves late-night coding, football on weekends and hunting for the best biryani near campus.' },
+  authMode:'signup',
+  selectedCollegeId:'iiith',
+  scope:'all',
+  connected:new Set([1,5]),
+  sent:new Set(),
+  requests:[{id:7, note:'Hey! Same city + we both love debate & music — coffee sometime?'},{id:11, note:'Saw you’re also looking for a study buddy. Library session this week?'}],
+  activeChatId:1,
+  chats:{
+    1:[{from:'them', text:'Hey Aarav! Saw we have 4 interests in common — are you going to the hackathon this weekend?', time:'10:24 AM'},{from:'me', text:'Hey Sneha! Yes, thinking of building a campus events app. Need a designer 👀', time:'10:26 AM'},{from:'them', text:'That’s literally my thing. Team up? I can do UI + pitch deck.', time:'10:27 AM'}],
+    5:[{from:'them', text:'Hi! I’m in the same hostel block — do you know where the laundry room is? 😅', time:'9:12 AM'},{from:'me', text:'Haha yes, ground floor near Block B. I’ll show you after class!', time:'9:15 AM'}],
+    4:[{from:'them', text:'Your AI project post was cool. Want to collab on a paper reading group?', time:'Yesterday'}],
+  },
+  unread:{1:0,5:1,4:1}
+};
+const $ = s=>document.querySelector(s);
+function collegeById(id){ return COLLEGES.find(c=>c.id===id) || COLLEGES[0]; }
+function personById(id){ return PEOPLE.find(p=>p.id===id); }
+function showToast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2800); }
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+
+/* COLLEGE HELPERS — any college in India: Diploma, BTech, Medical & more */
+const CUSTOM_COLORS=['#0E5E4A','#7C3AED','#DC2626','#1D4ED8','#B45309','#0F766E','#9D174D','#334155','#065F46','#B91C1C'];
+let collegeTypeFilter='all';
+let signupSelectedCollegeId=null;
+let mapSearchTimer=null;
+function collegeShort(name){ const w=name.replace(/[^a-zA-Z ]/g,'').split(' ').filter(Boolean); if(w.length===1) return w[0].slice(0,3).toUpperCase(); return w.slice(0,3).map(x=>x[0]).join('').toUpperCase(); }
+function getCollegeType(c){ if(c.type) return c.type; const n=(c.name||'').toLowerCase(); if(n.includes('medical')||n.includes('aiims')||n.includes('jipmer')) return 'Medical'; if(n.includes('polytechnic')) return 'Diploma / Polytechnic'; if(n.includes('iit')||n.includes('nit')||n.includes('iiit')||n.includes('engineering')||n.includes('technology')||n.includes('bits')) return 'BTech / Engineering'; return 'University / Degree'; }
+function normalizeText(s){ return (s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function collegeSearchText(c){ return normalizeText(c.name+' '+(c.aliases||[]).join(' ')+' '+c.city+' '+c.state+' '+getCollegeType(c)); }
+const GENERIC_WORDS=new Set(['college','university','institute','institution','technology','engineering','medical','polytechnic','school','degree','national','indian','india','government','govt','science','sciences','arts','management','research','academy','the','of','and','for','diploma','hospital','nursing','pharmacy','dental','education','group','international','state','central','deemed','autonomous','applied','general','public','private','memorial','trust','centre','center','studies','training','teaching']);
+function commonPrefixLen(a,b){ let i=0; while(i<a.length && i<b.length && a[i]===b[i]) i++; return i; }
+function wordFuzzyHit(w, targetWords){ return targetWords.some(tw=> tw===w || tw.startsWith(w) || w.startsWith(tw) || commonPrefixLen(w,tw)>=Math.max(5, Math.ceil(Math.min(w.length,tw.length)*0.7))); }
+function scoreCollege(c, query, city, stateName, typeVal){
+  const q=normalizeText(query); if(!q) return 0; const nameN=normalizeText(c.name); const aliases=(c.aliases||[]).map(normalizeText);
+  const nameWords=(nameN+' '+aliases.join(' ')).split(' ').filter(Boolean);
+  // 1) NAME relevance first. A suggestion must genuinely match the typed college name —
+  //    city/state/type points below can only rank name matches, never create one on their own.
+  //    (Previously +25 city / +15 state alone passed the >18 threshold, so a stale default
+  //    city's colleges — e.g. Hyderabad — stayed listed for any typed name.)
+  let nameScore=0, distinctive=false;
+  if(nameN===q){ nameScore+=120; distinctive=true; }
+  if(aliases.includes(q)){ nameScore+=115; distinctive=true; }
+  if(q.length>=3 && nameN.startsWith(q)){ nameScore+=70; distinctive=true; }
+  if(q.length>=3 && aliases.some(a=>a.startsWith(q))){ nameScore+=65; distinctive=true; }
+  if(q.length>=4 && nameN.includes(q)){ nameScore+=50; distinctive=true; }
+  if(q.length>=4 && aliases.some(a=>a.includes(q))){ nameScore+=48; distinctive=true; }
+  // partial typing like "sri venka" should match "Sri Venkateswara"
+  if(q.length>=4 && nameN.includes(q.slice(0, Math.min(q.length,9)))){ nameScore+=30; distinctive=true; }
+  const words=q.split(' ').filter(w=>w.length>2); let hits=0, distinctiveHits=0;
+  words.forEach(w=>{ if(wordFuzzyHit(w, nameWords)){ hits++; if(!GENERIC_WORDS.has(w)) distinctiveHits++; } });
+  if(words.length) nameScore+= Math.round((hits/words.length)*40);
+  if(distinctiveHits>0) distinctive=true;
+  if(!distinctive) return 0;
+  // 2) Location & type only boost/break ties among genuine name matches
+  let score=nameScore;
+  if(city && normalizeText(c.city)===normalizeText(city)) score+=25; else if(city && normalizeText(c.city).includes(normalizeText(city))) score+=10;
+  if(stateName && c.state===stateName) score+=15;
+  if(typeVal && getCollegeType(c)===typeVal) score+=12;
+  // penalise city mismatch when user explicitly typed a different city
+  if(city && normalizeText(c.city)!==normalizeText(city)) score-=8;
+  return score;
+}
+function findCollegesFuzzy(query, city, stateName, typeVal, limit){
+  const lim=limit||6; if(!normalizeText(query)) return [];
+  return COLLEGES.map(c=>({c, s:scoreCollege(c, query, city, stateName, typeVal)})).filter(x=>x.s>18).sort((a,b)=>b.s-a.s).slice(0,lim).map(x=>x.c);
+}
+function findCollege(name,city){
+  const results=findCollegesFuzzy(name, city, '', '', 1);
+  const n=normalizeText(name);
+  const exact=COLLEGES.find(c=>normalizeText(c.name)===n && (!city || normalizeText(c.city)===normalizeText(city))) || COLLEGES.find(c=>normalizeText(c.name)===n) || COLLEGES.find(c=>(c.aliases||[]).some(a=>normalizeText(a)===n));
+  return exact || (results.length && scoreCollege(results[0], name, city, '', '')>=110 ? results[0] : null);
+}
+function ensureCollege(name,city,stateName,typeVal,mapInfo){
+  const fuzzy=findCollege(name,city);
+  // Only reuse a preset if it is a strong/exact match for what was typed — never reuse a stale default like IIIT Hyderabad for "Sri Venkateswara, Tirupati"
+  if(fuzzy && (normalizeText(fuzzy.name)===normalizeText(name) || (fuzzy.aliases||[]).some(a=>normalizeText(a)===normalizeText(name)))) return fuzzy;
+  const cleanName=name.trim(), cleanCity=(city||'').trim();
+  const id='custom-'+cleanName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-'+cleanCity.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const found=COLLEGES.find(c=>c.id===id); if(found){ if(mapInfo) Object.assign(found, mapInfo); return found; }
+  const color=CUSTOM_COLORS[(cleanName.length+cleanCity.length)%CUSTOM_COLORS.length];
+  const entry={id, name:cleanName, city:cleanCity, state:(stateName||'').trim()||'India', color, short:collegeShort(cleanName), custom:true, type:typeVal||undefined, mapName:mapInfo?.mapName||'', lat:mapInfo?.lat||'', lon:mapInfo?.lon||''};
+  if(!entry.type){ const tmp={name:cleanName}; entry.type=getCollegeType(tmp); }
+  COLLEGES.push(entry); refreshCollegeLists(); return entry;
+}
+function refreshCollegeLists(){ const cl=$('#collegeCityList'); if(cl){ const cities=[...new Set(COLLEGES.map(c=>c.city))].sort(); cl.innerHTML=cities.map(ct=>`<option value="${ct}">`).join(''); } }
+function populateStateSelects(){ const opts='<option value="">Select state / UT…</option>'+INDIAN_STATES.map(s=>`<option>${s}</option>`).join(''); ['signupCollegeState','customCollegeState'].forEach(id=>{ const el=document.getElementById(id); if(el){ const cur=el.value; el.innerHTML=opts; if(cur) el.value=cur; } }); refreshCollegeLists(); }
+function googleMapsSearchUrl(name, city, stateName){ const q=[name||'college', city||'', stateName||'', 'India'].filter(Boolean).join(' '); return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q); }
+function updateMapsLinks(){
+  const sn=$('#signupCollegeName')?.value||'', sc=$('#signupCollegeCity')?.value||'', ss=$('#signupCollegeState')?.value||'';
+  const gl=$('#signupGoogleMapsLink'); if(gl) gl.href=googleMapsSearchUrl(sn, sc, ss);
+  const cn=$('#customCollegeName')?.value||'', cc=$('#customCollegeCity')?.value||'', cs=$('#customCollegeState')?.value||'';
+  const cgl=$('#customGoogleMapsLink'); if(cgl) cgl.href=googleMapsSearchUrl(cn||'college', cc, cs);
+}
+async function searchCollegeOnMap(name, city, stateName, statusEl, resultsEl, onPick){
+  updateMapsLinks();
+  const cleanName=(name||'').trim();
+  if(!cleanName){ if(statusEl) statusEl.textContent='Type a college name first, then search the map.'; return; }
+  if(statusEl) statusEl.textContent='🔍 Searching map for “'+cleanName+'” in '+(city||'India')+(stateName?', '+stateName:'')+'…';
+  if(resultsEl) resultsEl.innerHTML='';
+  const query=[cleanName, city||'', stateName||'', 'India'].filter(Boolean).join(' ');
+  try{
+    const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q='+encodeURIComponent(query);
+    const res=await fetch(url, {headers:{'Accept':'application/json'}});
+    if(!res.ok) throw new Error('map search failed');
+    const data=await res.json();
+    if(!data.length){
+      if(statusEl) statusEl.textContent='No exact map pin found for that spelling — check the Google Maps link above, which searches exactly what you typed. You can still continue: your typed college will be used, not any other college.';
+      return;
+    }
+    if(statusEl) statusEl.textContent='✓ Map found '+data.length+' result'+(data.length>1?'s':'')+' for what you typed — tap the correct one to use it:';
+    if(resultsEl) resultsEl.innerHTML=data.map((r,i)=>{
+      const label=(r.display_name||'').replace(/</g,'&lt;');
+      const gUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((r.display_name||query));
+      const coordsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(r.lat+','+r.lon);
+      return `<div class="map-result"><b>${label.split(',').slice(0,3).join(', ')}</b><p>${label}</p><div class="map-actions"><button type="button" class="btn btn-primary btn-sm" data-map-pick="${i}">✓ Use this college</button><a class="map-link" href="${coordsUrl}" target="_blank" rel="noopener">View on Google Maps ↗</a></div></div>`;
+    }).join('');
+    if(resultsEl && onPick){
+      resultsEl.querySelectorAll('[data-map-pick]').forEach(btn=>btn.addEventListener('click', ()=>{
+        const r=data[Number(btn.getAttribute('data-map-pick'))];
+        onPick(r);
+      }));
+    }
+  }catch(e){
+    if(statusEl) statusEl.textContent='Map search could not load right now (network). Use the Google Maps link above — it searches exactly the name + city + state you typed — and you can still continue with your typed college.';
+  }
+}
+function searchSignupOnMap(manual){
+  const name=$('#signupCollegeName').value, city=$('#signupCollegeCity').value, st=$('#signupCollegeState').value;
+  searchCollegeOnMap(name, city, st, $('#signupMapStatus'), $('#signupMapResults'), (r)=>{
+    const display=(r.display_name||'').split(',')[0];
+    // Keep the user's typed name as primary; store map verification, fill city/state from map address if present
+    const addr=r.address||{}; const mCity=addr.city||addr.town||addr.village||addr.state_district||city;
+    if(mCity) $('#signupCollegeCity').value=mCity.replace(/ District$/,'');
+    showToast('Map college selected — it will be used for your account ✓');
+    const matchEl=$('#signupCollegeMatch'); if(matchEl) matchEl.textContent='✓ Map-verified: '+($('#signupCollegeName').value.trim())+' — '+($('#signupCollegeCity').value.trim())+', '+($('#signupCollegeState').value||'India')+' ('+Number(r.lat).toFixed(4)+', '+Number(r.lon).toFixed(4)+'). This exact college will be set on your account.';
+    signupSelectedCollegeId='map:'+r.lat+','+r.lon;
+    window._signupMapPick={mapName:display, lat:r.lat, lon:r.lon};
+  });
+  if(manual) updateMapsLinks();
+}
+function searchCustomOnMap(manual){
+  updateMapsLinks();
+  const name=$('#customCollegeName')?.value||'', city=$('#customCollegeCity')?.value||'', st=$('#customCollegeState')?.value||'';
+  const gl=$('#customGoogleMapsLink'); if(gl) gl.href=googleMapsSearchUrl(name||'college', city, st);
+  searchCollegeOnMap(name, city, st, $('#customMapStatus'), $('#customMapResults'), (r)=>{
+    const addr=r.address||{}; const mCity=addr.city||addr.town||addr.village||city; if(mCity) $('#customCollegeCity').value=mCity;
+    window._customMapPick={mapName:(r.display_name||'').split(',')[0], lat:r.lat, lon:r.lon};
+    showToast('Map result selected — now tap “Add my college” to use it ✓');
+  });
+}
+function pickSignupSuggestion(id){
+  const c=collegeById(id); signupSelectedCollegeId=c.id; window._signupMapPick=null;
+  $('#signupCollegeName').value=c.name; $('#signupCollegeCity').value=c.city; const st=$('#signupCollegeState'); if(st) st.value=c.state;
+  const typeSel=$('#signupCollegeType'); if(typeSel) typeSel.value=getCollegeType(c);
+  onSignupCollegeInput(true);
+  showToast('Selected: '+c.name+' — '+c.city+', '+c.state);
+}
+function useTypedSignupCollege(){
+  // The student tapped the "use exactly what I typed" row — honour the typed name + city + state verbatim
+  signupSelectedCollegeId='typed'; window._signupMapPick=null;
+  const name=$('#signupCollegeName').value.trim(), city=$('#signupCollegeCity').value.trim(), stateVal=$('#signupCollegeState').value;
+  window._signupTypedName=normalizeText(name);
+  onSignupCollegeInput(true);
+  const matchEl=$('#signupCollegeMatch');
+  if(matchEl) matchEl.textContent='✓ Your college: “'+name+' · '+city+(stateVal?', '+stateVal:'')+'” will be set on your account — exactly as you typed it.';
+  showToast('Your typed college will be used ✓');
+}
+function onSignupCollegeInput(skipMapDebounce){
+  const name=$('#signupCollegeName').value, city=$('#signupCollegeCity').value, stateVal=$('#signupCollegeState').value, typeVal=$('#signupCollegeType')?.value||'';
+  const matchEl=$('#signupCollegeMatch'); const listEl=$('#signupSuggestList');
+  updateMapsLinks();
+  // If the typed name no longer matches the previously selected college, clear that selection immediately — fixes stale "Found: IIIT Hyderabad"
+  if(signupSelectedCollegeId && !String(signupSelectedCollegeId).startsWith('map:')){
+    if(signupSelectedCollegeId==='typed'){ if(window._signupTypedName!==normalizeText(name)) signupSelectedCollegeId=null; }
+    else { const sel=COLLEGES.find(c=>c.id===signupSelectedCollegeId); if(sel && normalizeText(sel.name)!==normalizeText(name)) signupSelectedCollegeId=null; }
+  }
+  const suggestions=findCollegesFuzzy(name, city, stateVal, typeVal, 6);
+  if(listEl){
+    if(normalizeText(name).length>=2 && suggestions.length){
+      listEl.innerHTML=suggestions.map(c=>`<button type="button" class="suggest-item ${signupSelectedCollegeId===c.id?'selected':''}" onclick="pickSignupSuggestion('${c.id}')"><span class="college-badge" style="background:${c.color};width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0">${c.short}</span><span style="flex:1"><b>${c.name}</b><span>📍 ${c.city}, ${c.state}</span></span><span class="type-badge">${getCollegeType(c)}</span></button>`).join('');
+    } else if(normalizeText(name).length>=2 && name.trim()){
+      // No preset college matches what was typed — show the typed college itself (with the typed
+      // city/state), never an unrelated stale list from a previous/default entry.
+      const typedLoc=(city.trim()||'Your city')+(stateVal?', '+stateVal:'');
+      listEl.innerHTML=`<button type="button" class="suggest-item ${signupSelectedCollegeId==='typed'?'selected':''}" style="border-style:dashed" onclick="useTypedSignupCollege()"><span class="college-badge" style="background:var(--brand);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0">${collegeShort(name.trim())||'YOU'}</span><span style="flex:1"><b>${name.trim().replace(/</g,'&lt;')}</b><span>📍 ${typedLoc.replace(/</g,'&lt;')} · Not in the preset list — tap to use exactly this college</span></span><span class="type-badge">YOUR COLLEGE</span></button>`;
+    } else listEl.innerHTML='';
+  }
+  const exact=findCollege(name, city);
+  if(exact && normalizeText(exact.name)===normalizeText(name)){
+    signupSelectedCollegeId=exact.id;
+    if(matchEl) matchEl.textContent='✓ Found: '+exact.name+' — '+exact.city+', '+exact.state+' · '+getCollegeType(exact)+'. This college will be set on your account.';
+  } else if(suggestions.length && normalizeText(name).length>=3){
+    if(matchEl) matchEl.textContent='Closest matches for “'+name.trim()+'” are above — tap the correct one. If none is yours, keep typing your full college name + city and it will be added as your college (not any other college).';
+  } else if(name.trim() && city.trim()){
+    if(matchEl) matchEl.textContent='✦ Your college: “'+name.trim()+' · '+city.trim()+(stateVal?', '+stateVal:'')+'” — not in the preset list, so we’ll add exactly this college for you and verify it with the map search below.';
+  } else if(matchEl){ matchEl.textContent=''; }
+  if(!skipMapDebounce){
+    clearTimeout(mapSearchTimer);
+    if(name.trim().length>=5 && city.trim().length>=3){
+      mapSearchTimer=setTimeout(()=>searchSignupOnMap(false), 900);
+    }
+  }
+}
+function setCollegeTypeFilter(btn){
+  document.querySelectorAll('#collegeTypeFilters button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); collegeTypeFilter=btn.dataset.ctype; renderColleges();
+}
+
+/* AUTH */
+function setAuthMode(mode){ state.authMode=mode; $('#tabSignup').classList.toggle('active',mode==='signup'); $('#tabLogin').classList.toggle('active',mode==='login'); $('#nameField').style.display = mode==='signup'?'block':'none'; const cf=$('#signupCollegeFields'); if(cf) cf.style.display = mode==='signup'?'block':'none'; $('#authTitle').textContent = mode==='signup'?'Join your campus circle':'Welcome back'; $('#authSub').textContent = mode==='signup'?'Use your college email — and enter your college name & city below, wherever in India you study.':'Sign in to pick up right where you left off.'; $('#authSubmit').textContent = mode==='signup'?'Create account → Continue':'Sign in → Go to Discover'; }
+function resolveTypedCollege(name, city, stateName, typeVal){
+  // 0) User explicitly tapped "use exactly what I typed" — never substitute a preset college
+  if(signupSelectedCollegeId==='typed' && window._signupTypedName===normalizeText(name)) return null;
+  // 1) User explicitly tapped a suggestion — honour it exactly
+  if(signupSelectedCollegeId && COLLEGES.some(c=>c.id===signupSelectedCollegeId)){
+    const sel=collegeById(signupSelectedCollegeId);
+    // only if it still matches what is typed (or typed is a prefix/alias of it)
+    const q=normalizeText(name), sn=normalizeText(sel.name);
+    if(sn===q || sn.startsWith(q) || (sel.aliases||[]).some(a=>normalizeText(a)===q || normalizeText(a).startsWith(q))) return sel;
+  }
+  // 2) Exact or alias match
+  const exact=findCollege(name, city); if(exact) return exact;
+  // 3) Prefix match like "sri venka" -> "Sri Venkateswara University", filtered by typed city/state
+  const q=normalizeText(name);
+  const prefix=COLLEGES.find(c=>normalizeText(c.name).startsWith(q) && (!city || normalizeText(c.city)===normalizeText(city))) || COLLEGES.find(c=>normalizeText(c.name).startsWith(q));
+  if(prefix && q.length>=4) return prefix;
+  // 4) Strong fuzzy match in the same city
+  const fuzzy=findCollegesFuzzy(name, city, stateName, typeVal, 3);
+  if(fuzzy.length && city && normalizeText(fuzzy[0].city)===normalizeText(city) && scoreCollege(fuzzy[0], name, city, stateName, typeVal)>=55) return fuzzy[0];
+  return null;
+}
+function handleAuth(e){ e.preventDefault(); const email=$('#email').value.trim(); const name=$('#fullName').value.trim(); const err=$('#authError'); if(!email.includes('@')||!email.includes('.')){ err.style.display='block'; err.textContent='Please enter a valid college email.'; return; } if(state.authMode==='signup'){ const cName=$('#signupCollegeName').value.trim(); const cCity=$('#signupCollegeCity').value.trim(); const cState=$('#signupCollegeState').value; const cType=$('#signupCollegeType')?.value||''; if(!cName || !cCity){ err.style.display='block'; err.textContent='Please enter your college name and the city where your college is present — any college in India works.'; $('#signupCollegeName').focus(); return; } const resolved=resolveTypedCollege(cName,cCity,cState,cType); const entry=resolved || ensureCollege(cName,cCity,cState,cType, window._signupMapPick||null); state.selectedCollegeId=entry.id; state.user.collegeId=entry.id; signupSelectedCollegeId=entry.id; $('#topLocationPill').textContent='📍 '+entry.name+' · '+entry.city; } err.style.display='none'; if(name) state.user.name=name; state.user.email=email; if(state.authMode==='login'){ enterApp(); showToast('Welcome back, '+state.user.name.split(' ')[0]+' 👋'); } else { startOnboarding(); showToast('Account created — '+collegeById(state.user.collegeId).name+', '+collegeById(state.user.collegeId).city+' is set ✓ Confirm or change it below'); } }
+function quickDemo(){ const cName=$('#signupCollegeName')?.value?.trim()||'IIIT Hyderabad'; const cCity=$('#signupCollegeCity')?.value?.trim()||'Hyderabad'; const resolved=resolveTypedCollege(cName,cCity,$('#signupCollegeState')?.value||'Telangana',''); const entry=resolved || ensureCollege(cName, cCity, $('#signupCollegeState')?.value||'Telangana'); state.selectedCollegeId=entry.id; state.user.collegeId=entry.id; startOnboarding(); showToast('Demo mode — you’re signed in as Aarav · '+entry.name); }
+function renderPopular(){ const picks=['sv-univ-tirupati','aiims-delhi','govt-poly-hyd','iitb','iitd','iisc','jadavpur','iitm','iiith','coep']; $('#popularColleges').innerHTML = picks.map(id=>collegeById(id)).map(c=>`<button onclick="quickPickCollege('${c.id}')">${c.name} · ${c.city}</button>`).join('')+`<button onclick="focusSignupCollege()">+ My college isn’t here — type it in Create Account ↑</button>`; }
+function focusSignupCollege(){ setAuthMode('signup'); const el=$('#signupCollegeName'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); el.select(); } showToast('Type your college name, city & state in Create Account — we’ll search the list + map for it'); }
+function quickPickCollege(id){ const c=collegeById(id); state.selectedCollegeId=id; state.user.collegeId=id; signupSelectedCollegeId=id; const sn=$('#signupCollegeName'), sc=$('#signupCollegeCity'), ss=$('#signupCollegeState'); if(sn) sn.value=c.name; if(sc) sc.value=c.city; if(ss) ss.value=c.state; const ts=$('#signupCollegeType'); if(ts) ts.value=getCollegeType(c); onSignupCollegeInput(true); setAuthMode('signup'); window.scrollTo({top:0,behavior:'smooth'}); showToast(c.name+', '+c.city+' filled in Create Account — now create your account ↑'); }
+
+/* ONBOARDING */
+function startOnboarding(){ $('#authView').classList.add('hidden'); $('#appView').classList.add('hidden'); $('#onboardView').classList.remove('hidden'); $('#logoutBtn').classList.remove('hidden'); populateStateSelects(); goOnboard(1); renderColleges(); renderInterests(); renderLooking(); if(state.selectedCollegeId){ updateSelectedHint(); const b=$('#toStep2Btn'); if(b) b.disabled=false; } window.scrollTo({top:0,behavior:'smooth'}); }
+function addCustomCollege(){ const name=$('#customCollegeName').value.trim(); const city=$('#customCollegeCity').value.trim(); const st=$('#customCollegeState').value; const tp=$('#customCollegeType')?.value||''; const err=$('#customCollegeError'); if(!name || !city || !st){ err.style.display='block'; err.textContent='Please enter your college name, the city where it is present, and its state / UT.'; return; } err.style.display='none'; const prevSignupSel=signupSelectedCollegeId; signupSelectedCollegeId=null; const resolved=(()=>{ const exact=findCollege(name,city); if(exact) return exact; const q=normalizeText(name); const pre=COLLEGES.find(c=>normalizeText(c.name).startsWith(q) && normalizeText(c.city)===normalizeText(city)); return pre||null; })(); signupSelectedCollegeId=prevSignupSel; const entry=resolved || ensureCollege(name,city,st,tp, window._customMapPick||null); selectCollege(entry.id); const cs=$('#collegeSearch'); if(cs) cs.value=''; renderColleges(); showToast('✓ Added & selected: '+entry.name+' — '+entry.city+', '+entry.state); }
+function goOnboard(step){ [1,2,3].forEach(n=>{ $('#onboardStep'+n).classList.toggle('hidden', n!==step); $('#bar'+n).style.width = n<=step?'100%':'0%'; $('#stepLabel'+n).textContent = n===step?'Now':(n<step?'Done':''); }); if(step===3) renderPreview(); window.scrollTo({top:0,behavior:'smooth'}); }
+function renderColleges(){ const rawQ=($('#collegeSearch')?.value||'').trim(); const q=rawQ.toLowerCase(); let list=COLLEGES.filter(c=>{ if(collegeTypeFilter!=='all' && getCollegeType(c)!==collegeTypeFilter) return false; if(!q) return true; return (c.name+' '+c.city+' '+c.state+' '+getCollegeType(c)+' '+(c.aliases||[]).join(' ')).toLowerCase().includes(q); }); if(rawQ && list.length===0){ list=findCollegesFuzzy(rawQ,'','','',20).filter(c=>collegeTypeFilter==='all'||getCollegeType(c)===collegeTypeFilter); } else if(rawQ){ const fuzzy=findCollegesFuzzy(rawQ,'','','',20); const seen=new Set(list.map(c=>c.id)); fuzzy.forEach(c=>{ if(!seen.has(c.id) && (collegeTypeFilter==='all'||getCollegeType(c)===collegeTypeFilter)) list.push(c); }); list.sort((a,b)=>scoreCollege(b,rawQ,'','','')-scoreCollege(a,rawQ,'','','')); } const hint=$('#collegeCountHint'); if(hint) hint.textContent='Showing '+list.length+' of '+COLLEGES.length+' colleges across India (Diploma + BTech + Medical + Universities)'+(collegeTypeFilter!=='all'?' · Filter: '+collegeTypeFilter:'')+' — any other college can be added below with map search, no list limit.'; $('#collegeGrid').innerHTML = list.length? list.map(c=>`<button type="button" class="college-item ${state.selectedCollegeId===c.id?'selected':''}" onclick="selectCollege('${c.id}')"><span class="college-badge" style="background:${c.color}">${c.short}</span><span><b>${c.name}</b><span>📍 ${c.city}, ${c.state}${c.custom?' · Added by you':''} · ${getCollegeType(c)}</span></span><span style="margin-left:auto">${state.selectedCollegeId===c.id?'✓':''}</span></button>`).join('') : `<p class="hint" style="grid-column:1/-1">No college found for that search — use “Search the map &amp; add it” just below with its name, city &amp; state. Every college in India is welcome.</p>`; const btn=$('#toStep2Btn'); if(btn) btn.disabled = !state.selectedCollegeId; if(state.selectedCollegeId) updateSelectedHint(); }
+function selectCollege(id){ state.selectedCollegeId=id; state.user.collegeId=id; renderColleges(); updateSelectedHint(); $('#toStep2Btn').disabled=false; }
+function updateSelectedHint(){ const c=collegeById(state.selectedCollegeId); const gUrl=googleMapsSearchUrl(c.name, c.city, c.state); $('#selectedCollegeHint').innerHTML = `Selected: <b>${c.name}</b> — ${c.city}, ${c.state} · ${getCollegeType(c)}. Students here will appear first in Discover. <a href="${gUrl}" target="_blank" rel="noopener" style="font-weight:800;text-decoration:underline">View this college on Google Maps ↗</a>`; $('#topLocationPill').textContent = '📍 '+c.name+' · '+c.city; }
+function renderInterests(){ $('#interestGrid').innerHTML = ALL_INTERESTS.map(i=>`<button type="button" class="chip ${state.user.interests.includes(i)?'selected':''}" onclick="toggleInterest('${i}')">${i}</button>`).join(''); $('#interestCount').textContent = state.user.interests.length+' selected'; }
+function toggleInterest(i){ const idx=state.user.interests.indexOf(i); if(idx>=0) state.user.interests.splice(idx,1); else state.user.interests.push(i); renderInterests(); }
+function renderLooking(){ $('#lookingGrid').innerHTML = LOOKING_FOR.map(i=>`<button type="button" class="chip ${state.user.looking.includes(i)?'selected':''}" onclick="toggleLooking('${i}')">${i}</button>`).join(''); }
+function toggleLooking(i){ const idx=state.user.looking.indexOf(i); if(idx>=0) state.user.looking.splice(idx,1); else state.user.looking.push(i); renderLooking(); }
+function renderPreview(){ state.user.course=$('#courseInput').value||state.user.course; state.user.year=$('#yearSelect').value; state.user.bio=$('#bioInput').value||state.user.bio; const c=collegeById(state.user.collegeId); $('#profilePreview').innerHTML = personCardHTML({id:0,name:state.user.name,initials:initials(state.user.name),color:'#0E5E4A',collegeId:state.user.collegeId,course:state.user.course,year:state.user.year,city:c.city,online:true,distance:'That’s you!',match:100,bio:state.user.bio,interests:state.user.interests}, true); }
+function finishOnboarding(){ state.user.course=$('#courseInput').value||state.user.course; state.user.year=$('#yearSelect').value; state.user.bio=$('#bioInput').value||state.user.bio; if(state.user.interests.length<1){ showToast('Pick at least 1 interest so people can find you'); goOnboard(2); return; } enterApp(); showToast('You’re in! Here are students near '+collegeById(state.user.collegeId).name); }
+
+/* APP */
+function enterApp(){ $('#authView').classList.add('hidden'); $('#onboardView').classList.add('hidden'); $('#appView').classList.remove('hidden'); $('#logoutBtn').classList.remove('hidden'); $('#mobileNav').style.display=''; const c=collegeById(state.user.collegeId); $('#topLocationPill').textContent='📍 '+c.name+' · '+c.city; $('#sideAvatar').textContent=initials(state.user.name); $('#sideAvatar').innerHTML=initials(state.user.name)+'<span class="online-dot"></span>'; $('#sideName').textContent=state.user.name; $('#sideMeta').textContent=c.name+' • '+state.user.year; const first=state.user.name.split(' ')[0]; const hour=new Date().getHours(); const greet=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening'; $('#heroTitle').textContent=greet+', '+first; $('#heroSub').textContent='Here are students from '+c.name+' and nearby colleges in '+c.city+' who share your interests.'; renderPeople(); renderConnections(); renderChatList(); renderChatWindow(); renderMyProfile(); showSection('discover'); window.scrollTo({top:0}); }
+function showSection(name){ ['discover','connections','messages','profile'].forEach(s=>{ $('#section-'+s).classList.toggle('hidden', s!==name); }); document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active', b.dataset.nav===name)); if(name==='messages'){ renderChatList(); renderChatWindow(); } window.scrollTo({top:0,behavior:'smooth'}); }
+function setScope(btn){ document.querySelectorAll('#scopeFilters button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.scope=btn.dataset.scope; renderPeople(); }
+function resetFilters(){ $('#peopleSearch').value=''; $('#yearFilter').value='all'; state.scope='all'; document.querySelectorAll('#scopeFilters button').forEach(b=>b.classList.toggle('active', b.dataset.scope==='all')); renderPeople(); }
+function filteredPeople(){ const q=($('#peopleSearch')?.value||'').toLowerCase(); const yr=$('#yearFilter')?.value||'all'; const myC=collegeById(state.user.collegeId); let list=PEOPLE.filter(p=>{ if(yr!=='all' && p.year!==yr) return false; if(state.scope==='same-college' && p.collegeId!==state.user.collegeId) return false; if(state.scope==='same-city' && p.city!==myC.city) return false; if(state.scope==='online' && !p.online) return false; const hay=(p.name+' '+p.course+' '+p.interests.join(' ')+' '+collegeById(p.collegeId).name).toLowerCase(); return hay.includes(q); }); if(state.scope==='mutual') list.sort((a,b)=> mutualCount(b)-mutualCount(a)); else list.sort((a,b)=>b.match-a.match); return list; }
+function mutualCount(p){ return p.interests.filter(i=>state.user.interests.includes(i)).length; }
+function personCardHTML(p, isPreview=false){ const c=collegeById(p.collegeId); const isConn=state.connected.has(p.id); const isSent=state.sent.has(p.id); const mutual=p.interests.filter(i=>state.user.interests.includes(i)); let action=''; if(isPreview) action=`<button class="btn btn-primary btn-block">This is you ✨</button>`; else if(isConn) action=`<button class="btn btn-primary" onclick="openChat(${p.id})">💬 Message</button><button class="btn btn-ghost" onclick="showToast('Profile saved to your list ✓')">Save</button>`; else if(isSent) action=`<button class="btn btn-ghost" style="flex:1" disabled>✓ Request sent</button><button class="btn btn-ghost" onclick="cancelRequest(${p.id})">Undo</button>`; else action=`<button class="btn btn-accent" onclick="connectPerson(${p.id})">+ Connect</button><button class="btn btn-ghost" onclick="openChatPreview(${p.id})">Say hi</button>`; return `<article class="card person"><div class="person-cover" style="background:${p.color}"><span class="loc">📍 ${p.distance} · ${p.city}</span><span class="match">${p.match}% match</span></div><div class="person-body"><div class="person-head"><div class="avatar" style="background:${p.color}">${p.initials}${p.online?'<span class="online-dot"></span>':''}</div><div><h3>${p.name}</h3><div class="meta">${p.course} · ${p.year}<br>${c.name}</div></div></div><p class="bio">${p.bio}</p><div style="font-size:12px;font-weight:800;margin-bottom:6px">${mutual.length? '✦ '+mutual.length+' mutual: '+mutual.join(', ') : 'Looking for: '+p.looking}</div><div class="tags">${p.interests.map(i=>`<span class="tag ${state.user.interests.includes(i)?'mutual':''}">${i}</span>`).join('')}</div><div class="card-actions">${action}</div></div></article>`; }
+function renderPeople(){ const list=filteredPeople(); $('#peopleGrid').innerHTML=list.map(p=>personCardHTML(p)).join(''); $('#peopleEmpty').classList.toggle('hidden', list.length>0); $('#discoverBadge').textContent=list.length; const nearby=PEOPLE.filter(p=>p.city===collegeById(state.user.collegeId).city).length*24+40; $('#statNearby').textContent=nearby; $('#statOnline').textContent=PEOPLE.filter(p=>p.online).length*11+8; }
+function connectPerson(id){ state.sent.add(id); renderPeople(); showToast('Request sent to '+personById(id).name+' — we’ll notify you when they accept'); setTimeout(()=>{ if(state.sent.has(id)){ state.sent.delete(id); state.connected.add(id); if(!state.chats[id]) state.chats[id]=[{from:'them',text:'Hey '+state.user.name.split(' ')[0]+'! Thanks for connecting — saw we’re both into '+(personById(id).interests.find(i=>state.user.interests.includes(i))||'campus life')+'. What’s up?',time:'Now'}]; state.unread[id]=1; renderPeople(); renderConnections(); renderChatList(); updateBadges(); showToast('🎉 '+personById(id).name+' accepted your request! You can chat now.'); } }, 2600); }
+function cancelRequest(id){ state.sent.delete(id); renderPeople(); showToast('Request withdrawn'); }
+function openChatPreview(id){ showToast('Connect with '+personById(id).name.split(' ')[0]+' first — then you can chat instantly'); connectPerson(id); }
+function updateBadges(){ const unreadTotal=Object.values(state.unread).reduce((a,b)=>a+b,0); $('#msgBadge').textContent=unreadTotal; $('#msgBadge').style.display=unreadTotal?'inline-grid':'none'; $('#connBadge').textContent=state.connected.size; $('#connectedCount').textContent=state.connected.size; $('#reqCount').textContent=state.requests.length; }
+
+/* CONNECTIONS */
+function renderConnections(){ updateBadges(); const reqEl=$('#requestsList'); if(!state.requests.length) reqEl.innerHTML=`<div class="empty"><h3>No pending requests</h3><p>When someone wants to connect, they’ll show up here.</p></div>`; else reqEl.innerHTML=state.requests.map(r=>{ const p=personById(r.id); const c=collegeById(p.collegeId); return `<div class="card conn-row"><div class="avatar" style="background:${p.color}">${p.initials}</div><div class="grow"><b>${p.name}</b> <span style="color:var(--muted);font-size:13px">· ${p.course}, ${p.year} · ${c.name}</span><p style="margin:4px 0 0;font-size:13.5px;color:var(--muted)">“${r.note}”</p></div><button class="btn btn-primary btn-sm" onclick="acceptRequest(${p.id})">Accept</button><button class="btn btn-ghost btn-sm" onclick="declineRequest(${p.id})">Decline</button></div>`; }).join(''); const connEl=$('#connectionsList'); if(!state.connected.size) connEl.innerHTML=`<div class="empty"><h3>No connections yet</h3><p>Head to Discover and send your first connection request.</p></div>`; else connEl.innerHTML=[...state.connected].map(id=>{ const p=personById(id); const c=collegeById(p.collegeId); return `<div class="card conn-row"><div class="avatar" style="background:${p.color}">${p.initials}${p.online?'<span class="online-dot"></span>':''}</div><div class="grow"><b>${p.name}</b> <span style="color:var(--muted);font-size:13px">· ${c.name} · ${p.online?'Online now':'Offline'}</span><p style="margin:4px 0 0;font-size:13.5px;color:var(--muted)">${p.interests.join(' · ')}</p></div><button class="btn btn-primary btn-sm" onclick="openChat(${p.id})">💬 Message</button></div>`; }).join(''); }
+function acceptRequest(id){ state.requests=state.requests.filter(r=>r.id!==id); state.connected.add(id); if(!state.chats[id]) state.chats[id]=[{from:'me',text:'Hey! Glad we connected — nice to meet you!',time:'Now'}]; renderConnections(); renderPeople(); showToast('Connected with '+personById(id).name+' 🎉 Say hi in Messages'); }
+function declineRequest(id){ state.requests=state.requests.filter(r=>r.id!==id); renderConnections(); showToast('Request declined'); }
+
+/* CHAT */
+function openChat(id){ state.activeChatId=id; state.unread[id]=0; if(!state.chats[id]) state.chats[id]=[]; showSection('messages'); renderChatList(); renderChatWindow(); updateBadges(); }
+function chatIds(){ const ids=new Set([...state.connected, ...Object.keys(state.chats).map(Number)]); return [...ids].filter(id=>state.chats[id]); }
+function renderChatList(){ const ids=chatIds(); $('#chatList').innerHTML = ids.length? ids.map(id=>{ const p=personById(id); const msgs=state.chats[id]; const last=msgs[msgs.length-1]; const unread=state.unread[id]||0; return `<button class="chat-item ${state.activeChatId===id?'active':''}" onclick="openChat(${id})"><div class="avatar" style="background:${p.color};width:44px;height:44px">${p.initials}${p.online?'<span class="online-dot"></span>':''}</div><div style="flex:1;min-width:0"><b>${p.name}</b> ${unread?`<span class="badge" style="float:right">${unread}</span>`:''}<p>${last?(last.from==='me'?'You: ':'')+last.text:''}</p></div></button>`; }).join('') : `<p class="hint" style="padding:16px">No chats yet. Connect with someone in Discover to start chatting.</p>`; }
+function renderChatWindow(){ const p=personById(state.activeChatId); if(!p){ $('#chatHead').innerHTML='<b>Pick a conversation</b>'; $('#messagesBox').innerHTML=''; return; } const c=collegeById(p.collegeId); $('#chatHead').innerHTML=`<div class="avatar" style="background:${p.color}">${p.initials}${p.online?'<span class="online-dot"></span>':''}</div><div style="flex:1"><b>${p.name}</b><div style="font-size:12px;color:var(--muted)">${c.name} · ${p.course} · ${p.online?'<span style="color:#16A34A;font-weight:800">● Online</span>':'Last seen recently'}</div></div><button class="btn btn-ghost btn-sm" onclick="showToast('Safety: you can block or report from a profile in the full app')">⋯</button>`; const msgs=state.chats[p.id]||[]; $('#messagesBox').innerHTML=msgs.map(m=>`<div class="bubble ${m.from}">${escapeHtml(m.text)}<small>${m.time}</small></div>`).join(''); $('#quickReplies').innerHTML=['Hey! 👋','Coffee tomorrow?','Library study session?','Which hostel / area are you in?'].map(q=>`<button type="button" onclick="quickSend(this)">${q}</button>`).join(''); const box=$('#messagesBox'); box.scrollTop=box.scrollHeight; }
+function escapeHtml(s){ return s.replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}); }
+function quickSend(btn){ $('#chatInput').value=btn.textContent; sendMessage(new Event('submit')); }
+function sendMessage(e){ e.preventDefault(); const input=$('#chatInput'); const text=input.value.trim(); if(!text) return; const id=state.activeChatId; if(!state.chats[id]) state.chats[id]=[]; state.chats[id].push({from:'me',text,time:nowTime()}); input.value=''; renderChatWindow(); renderChatList(); const p=personById(id); const replies=[`That sounds great! Let’s plan it after classes?`,`Haha yes! Also — are you going to the fest this weekend?`,`Totally. Btw we have ${mutualCount(p)} interests in common, we should’ve connected earlier 😄`,`Nice! I’m free tomorrow afternoon if you want to meet near the canteen.`,`Let’s do it. I’ll bring notes from last lecture too.`]; setTimeout(()=>{ const box=$('#messagesBox'); const t=document.createElement('div'); t.className='typing'; t.id='typingBubble'; t.textContent=p.name.split(' ')[0]+' is typing…'; box.appendChild(t); box.scrollTop=box.scrollHeight; },500); setTimeout(()=>{ const tb=$('#typingBubble'); if(tb) tb.remove(); state.chats[id].push({from:'them',text:replies[Math.floor(Math.random()*replies.length)],time:nowTime()}); if(!$('#section-messages').classList.contains('hidden') && state.activeChatId===id){ renderChatWindow(); } else { state.unread[id]=(state.unread[id]||0)+1; updateBadges(); } renderChatList(); },1900); }
+function renderMyProfile(){ const c=collegeById(state.user.collegeId); const fake={id:0,name:state.user.name,initials:initials(state.user.name),color:'#0E5E4A',collegeId:state.user.collegeId,course:state.user.course,year:state.user.year,city:c.city,online:true,distance:c.city,match:100,bio:state.user.bio,interests:state.user.interests}; $('#myProfileCard').innerHTML=personCardHTML(fake,true); }
+
+$('#logoutBtn').addEventListener('click',()=>{ $('#appView').classList.add('hidden'); $('#onboardView').classList.add('hidden'); $('#authView').classList.remove('hidden'); $('#logoutBtn').classList.add('hidden'); $('#mobileNav').style.display='none'; $('#topLocationPill').textContent='📍 Pick your college to start'; showToast('Logged out — see you soon'); });
+/* Re-filter the Create Account college suggestions on EVERY edit of the college fields.
+   Bound here in JS in addition to the inline handlers, so the suggestion list always
+   follows the college name / city / state / type the student has actually typed and can
+   never sit frozen on an earlier entry. The college fields also start EMPTY (no prefilled
+   college/city/state), so the first list shown is always driven by the student's own typing. */
+['signupCollegeName','signupCollegeCity','signupCollegeState','signupCollegeType'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.addEventListener('input', ()=>onSignupCollegeInput()); el.addEventListener('change', ()=>onSignupCollegeInput()); el.addEventListener('keyup', ()=>onSignupCollegeInput()); } });
+/* ===== HERO SCROLL ANIMATIONS ===== */
+function buildMarquee(){
+  const track=$('#marqueeTrack'); if(!track) return;
+  const picks=['iitb','sv-univ-tirupati','aiims-delhi','iitd','iisc','christ','anna','coep','jadavpur','vit','nitw','du'];
+  const names=picks.map(id=>collegeById(id)).filter(Boolean).map(c=>c.name+' · '+c.city);
+  const set='<div class="marquee-set" aria-hidden="true">'+names.map(n=>`<span>${n}</span><i></i>`).join('')+'</div>';
+  track.innerHTML=set+set;
+}
+function initHeroFx(){
+  const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const io=('IntersectionObserver' in window) ? new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('revealed'); io.unobserve(e.target); } });
+  },{threshold:.12}) : null;
+  document.querySelectorAll('[data-reveal]').forEach(el=>{ if(io && !reduce) io.observe(el); else el.classList.add('revealed'); });
+  if(reduce) return;
+  const hero=$('#heroFx'); if(!hero) return;
+  let ticking=false;
+  function onScroll(){
+    if(ticking) return; ticking=true;
+    requestAnimationFrame(()=>{
+      ticking=false;
+      const auth=$('#authView'); if(!auth || auth.classList.contains('hidden')) return;
+      const y=window.scrollY||0;
+      if(y<700){ hero.style.transform='translateY('+(y*0.12)+'px)'; hero.style.opacity=String(Math.max(0,1-y/650)); }
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+}
+function scrollToSignup(){
+  const card=document.querySelector('.auth-card');
+  if(card) card.scrollIntoView({behavior:'smooth',block:'start'});
+  const name=$('#fullName'); if(name && window.innerWidth<=960) setTimeout(()=>name.focus({preventScroll:true}),450);
+}
+
+/* ===== CAMPUS JOURNEY — scroll/swipe drives the scene like a video ===== */
+let journeyRAF=null;
+function jSeg(p,a,b){ return Math.max(0, Math.min(1, (p-a)/(b-a))); }
+function jEase(t){ return t*t*(3-2*t); }
+function jLerp(a,b,t){ return a+(b-a)*t; }
+function updateJourney(){
+  const sec=document.getElementById('campusJourney'); if(!sec) return;
+  const auth=document.getElementById('authView'); if(!auth || auth.classList.contains('hidden')) return;
+  const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const total=Math.max(1, sec.offsetHeight - window.innerHeight);
+  const rect=sec.getBoundingClientRect();
+  let p=reduce ? 1 : Math.max(0, Math.min(1, -rect.top/total));
+  const approach=jEase(jSeg(p,0,.30)), gate=jEase(jSeg(p,.26,.55)), walk=jEase(jSeg(p,.44,.76)), meet=jEase(jSeg(p,.66,.88)), party=jEase(jSeg(p,.84,1));
+  const set=(id,transform,opacity)=>{ const el=document.getElementById(id); if(el){ el.style.transform=transform; if(opacity!==undefined) el.style.opacity=String(opacity); } };
+  const bScale=jLerp(.84,1.10,approach)*jLerp(1,1.07,walk);
+  set('jBuilding','translateX(-50%) scale('+bScale.toFixed(3)+') translateY('+jLerp(10,-4,approach)+'px)');
+  set('jCloudA','translateX('+jLerp(0,42,approach+walk*.4)+'px)');
+  set('jCloudB','translateX('+jLerp(0,-34,approach+walk*.4)+'px)');
+  set('jTreeL','scale('+jLerp(1,1.18,approach)+')'); set('jTreeR','scale('+jLerp(1,1.18,approach)+')');
+  set('jGateL','rotateY('+(-78*gate).toFixed(1)+'deg)');
+  set('jGateR','rotateY('+(78*gate).toFixed(1)+'deg)');
+  /* You: start at the gate, walk up the path toward the building, growing as you come closer */
+  const youY=jLerp(0,-92,walk), youS=jLerp(.78,1.12,walk), bob=(walk>0&&walk<1)?Math.abs(Math.sin(p*46))*5:0;
+  set('jYou','translateX(-50%) translateY('+(youY-bob).toFixed(1)+'px) scale('+youS.toFixed(3)+')');
+  const youLabel=document.querySelector('#jYou .j-name'); if(youLabel) youLabel.textContent = party>=1?'You + your circle 🎉':(walk>.55?'Almost there…':(gate>.3?'Walking in…':'You arrive'));
+  /* Friends slide/run in from the sides + down the path to meet you */
+  set('jFriend1','translateX('+jLerp(-170,18,meet)+'px) translateY('+jLerp(26,-18,meet)+'px) scale('+jLerp(.8,1,meet)+')', jSeg(p,.64,.76));
+  set('jFriend2','translateX('+jLerp(170,-18,meet)+'px) translateY('+jLerp(26,-18,meet)+'px) scale('+jLerp(.8,1,meet)+')', jSeg(p,.64,.76));
+  set('jFriend3','translateY('+jLerp(-64,8,meet)+'px) scale('+jLerp(.7,1,meet)+')', jSeg(p,.70,.84));
+  /* Chat bubbles pop in one by one at the end */
+  const bub=(id,a)=>{ const t=jSeg(p,a,a+.07); const el=document.getElementById(id); if(el){ const base=id==='jBubble3'?'translateX(-50%) ':''; el.style.transform=base+'translateY('+jLerp(14,0,jEase(t))+'px) scale('+jLerp(.7,1,jEase(t))+')'; el.style.opacity=String(t); } };
+  bub('jBubble1',.84); bub('jBubble2',.90); bub('jBubble3',.95);
+  [['jSpark1',.86],['jSpark2',.91],['jSpark3',.96]].forEach(([id,a])=>{ const t=jSeg(p,a,1); const el=document.getElementById(id); if(el){ el.style.opacity=String(t*.95); el.style.transform='scale('+jLerp(.4,1.35,t)+') rotate('+(t*28)+'deg)'; } });
+  /* Captions, progress bar, dots + scene label */
+  const idx=p<.28?0:(p<.56?1:(p<.84?2:3));
+  document.querySelectorAll('[data-jcaption]').forEach(el=>el.classList.toggle('active', Number(el.dataset.jcaption)===idx));
+  const bar=document.getElementById('journeyBar'); if(bar) bar.style.width=(p*100).toFixed(1)+'%';
+  document.querySelectorAll('#journeyDots i').forEach((d,i)=>d.classList.toggle('on', i<=idx));
+  const label=document.getElementById('journeyLabel'); if(label) label.textContent='Scene '+(idx+1)+' of 4 · '+['Arriving','Gates opening','Meeting friends','First friend made'][idx];
+  const playBtn=document.getElementById('journeyPlayBtn'); if(playBtn && !journeyRAF) playBtn.textContent = p>=.99?'↺ Replay the story':'▶ Play the story';
+}
+function initJourney(){
+  const sec=document.getElementById('campusJourney'); if(!sec) return;
+  const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ sec.classList.add('journey-reduced'); }
+  let ticking=false;
+  window.addEventListener('scroll',()=>{ if(ticking) return; ticking=true; requestAnimationFrame(()=>{ ticking=false; updateJourney(); }); },{passive:true});
+  window.addEventListener('resize',updateJourney,{passive:true});
+  /* Touch swipe already scrolls the page; also refresh on touchmove so the scene tracks the finger smoothly */
+  window.addEventListener('touchmove',()=>{ requestAnimationFrame(updateJourney); },{passive:true});
+  updateJourney();
+}
+function playJourney(){
+  const sec=document.getElementById('campusJourney'); if(!sec) return;
+  if(journeyRAF){ cancelAnimationFrame(journeyRAF); journeyRAF=null; updateJourney(); return; }
+  const startY=window.scrollY, secTop=startY+sec.getBoundingClientRect().top;
+  const total=Math.max(1, sec.offsetHeight-window.innerHeight);
+  const from=(startY>=secTop-4 && startY<secTop+total)?startY:secTop;
+  const target=secTop+total, dur=6500, t0=performance.now();
+  const btn=document.getElementById('journeyPlayBtn'); if(btn) btn.textContent='⏸ Pause story';
+  const cancel=()=>{ if(journeyRAF){ cancelAnimationFrame(journeyRAF); journeyRAF=null; window.removeEventListener('wheel',cancel); window.removeEventListener('touchstart',cancel); updateJourney(); } };
+  window.addEventListener('wheel',cancel,{passive:true}); window.addEventListener('touchstart',cancel,{passive:true});
+  const stepFn=(now)=>{ const t=Math.min(1,(now-t0)/dur); const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; window.scrollTo(0, from+(target-from)*e); updateJourney(); if(t<1){ journeyRAF=requestAnimationFrame(stepFn); } else { journeyRAF=null; window.removeEventListener('wheel',cancel); window.removeEventListener('touchstart',cancel); updateJourney(); } };
+  journeyRAF=requestAnimationFrame(stepFn);
+}
+function skipJourney(){
+  const sec=document.getElementById('campusJourney'); if(!sec) return;
+  const y=window.scrollY+sec.getBoundingClientRect().bottom-80;
+  window.scrollTo({top:y,behavior:'smooth'});
+}
+
+buildMarquee();
+initHeroFx();
+initJourney();
+populateStateSelects(); renderPopular(); updateBadges(); onSignupCollegeInput();
+</script>
+</body>
+</html>

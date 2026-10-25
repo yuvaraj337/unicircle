@@ -294,7 +294,7 @@ textarea.input{resize:vertical;min-height:88px}
 <div id="dbSetupBanner" class="hidden" style="background:#7C2D12;color:#FFF7ED;border-bottom:3px solid #FFB81C">
   <div class="wrap" style="padding:16px 20px">
     <b style="font-size:15px">⚠️ One-time database setup needed</b>
-    <p style="margin:6px 0 0;font-size:13.5px;line-height:1.55">UniCircle is connected to your Supabase project, but the <b>profiles</b>, <b>connections</b> and <b>messages</b> tables don’t exist yet. In Supabase: open <b>SQL Editor → New query</b>, paste the script below, and click <b>Run</b>. Then refresh this page — sign-up, Discover, connections and chats will work for every signed-in student, across laptop and mobile.</p>
+    <p style="margin:6px 0 0;font-size:13.5px;line-height:1.55">UniCircle is connected to your Supabase project, but a table or a column is missing in <b>profiles</b>, <b>connections</b> or <b>messages</b> — for example the <b>looking</b> column of <b>profiles</b>. In Supabase: open <b>SQL Editor → New query</b>, paste the script below, and click <b>Run</b>. It only creates or adds what’s missing and keeps every existing account and row. Then refresh this page — sign-up, Discover, connections and chats will work for every signed-in student, across laptop and mobile.</p>
     <details style="margin-top:8px">
       <summary style="cursor:pointer;font-weight:800;font-size:13.5px">Show the setup SQL</summary>
       <pre id="setupSql" style="white-space:pre-wrap;word-break:break-word;background:#431407;color:#FFEDD5;border-radius:12px;padding:14px;font-size:12px;line-height:1.5;max-height:320px;overflow:auto;margin:10px 0"></pre>
@@ -823,6 +823,27 @@ create table if not exists public.messages (
   text text not null,
   created_at timestamptz not null default now()
 );
+-- Repair pass: if a table already exists from an earlier setup, add any columns it is missing.
+-- Safe to run any time: existing rows and data are kept, nothing is dropped.
+alter table public.profiles add column if not exists name text;
+alter table public.profiles add column if not exists email text;
+alter table public.profiles add column if not exists college_name text;
+alter table public.profiles add column if not exists college text;
+alter table public.profiles add column if not exists city text;
+alter table public.profiles add column if not exists state text;
+alter table public.profiles add column if not exists course text default '';
+alter table public.profiles add column if not exists year text default '2nd year';
+alter table public.profiles add column if not exists interests text[] not null default '{}';
+alter table public.profiles add column if not exists looking text[] not null default '{}';
+alter table public.profiles add column if not exists bio text default '';
+alter table public.profiles add column if not exists onboarded boolean not null default false;
+alter table public.profiles add column if not exists online boolean not null default false;
+alter table public.profiles add column if not exists created_at timestamptz not null default now();
+alter table public.connections add column if not exists status text not null default 'pending';
+alter table public.connections add column if not exists note text default '';
+alter table public.connections add column if not exists created_at timestamptz not null default now();
+alter table public.messages add column if not exists text text;
+alter table public.messages add column if not exists created_at timestamptz not null default now();
 alter table public.profiles enable row level security;
 alter table public.connections enable row level security;
 alter table public.messages enable row level security;
@@ -843,12 +864,17 @@ create policy "delete my connection" on public.connections for delete to authent
 drop policy if exists "see my messages" on public.messages;
 create policy "see my messages" on public.messages for select to authenticated using (auth.uid() = sender_id or auth.uid() = receiver_id);
 drop policy if exists "send message" on public.messages;
-create policy "send message" on public.messages for insert to authenticated with check (auth.uid() = sender_id);`;
+create policy "send message" on public.messages for insert to authenticated with check (auth.uid() = sender_id);
+notify pgrst, 'reload schema';`;
 let dbSetupShown=false;
 function isMissingTable(err){ if(!err) return false; const code=String(err.code||''); const m=((err.message||'')+' '+(err.details||'')).toLowerCase(); return code==='42P01' || code==='PGRST205' || m.indexOf('does not exist')>=0 || m.indexOf('could not find the table')>=0; }
-function showDbSetup(){ const b=document.getElementById('dbSetupBanner'); if(b) b.classList.remove('hidden'); if(!dbSetupShown){ dbSetupShown=true; showToast('Supabase tables missing — run the one-time setup SQL shown at the top of this page'); } }
+function missingColumnOf(err){ if(!err) return null; const code=String(err.code||''); const msg=((err.message||'')+' '+(err.details||'')); if(code==='PGRST204' || /could not find the '[^']+' column/i.test(msg)){ const m=msg.match(/could not find the '([^']+)' column/i); return m?m[1]:''; } return null; }
+function isMissingColumn(err){ return missingColumnOf(err)!==null; }
+const skippedProfileCols=new Set();
+async function profilesWrite(op, payload, id){ let body={}; Object.keys(payload).forEach(k=>{ if(!skippedProfileCols.has(k)) body[k]=payload[k]; }); for(let attempt=0; attempt<8; attempt++){ if(!Object.keys(body).length) return {error:null, data:null}; const r = op==='insert' ? await sb.from('profiles').insert(body) : await sb.from('profiles').update(body).eq('id', id); if(!r.error) return r; const col=missingColumnOf(r.error); if(col===null) return r; showDbSetup(); if(col && Object.prototype.hasOwnProperty.call(body, col)){ delete body[col]; skippedProfileCols.add(col); continue; } return r; } return {error:{message:'Could not save your profile — a database column is missing. Run the fix SQL shown at the top of this page, then try again.'}}; }
+function showDbSetup(){ const b=document.getElementById('dbSetupBanner'); if(b) b.classList.remove('hidden'); if(!dbSetupShown){ dbSetupShown=true; showToast('Database fix needed — run the SQL shown at the top of this page (it only adds what’s missing; your data is kept)'); } }
 function copySetupSql(){ const done=()=>showToast('Setup SQL copied — paste it in Supabase → SQL Editor and click Run'); if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(SETUP_SQL).then(done, ()=>showToast('Copy failed — open “Show the setup SQL” and copy it manually')); } else { showToast('Open “Show the setup SQL” and copy it manually'); } }
-function friendlyErr(ex){ if(isMissingTable(ex)){ showDbSetup(); return 'The Supabase tables (profiles / connections / messages) do not exist yet — run the one-time setup SQL shown at the top of this page in Supabase → SQL Editor, then try again.'; } return (ex && ex.message) ? ex.message : 'Something went wrong — please try again.'; }
+function friendlyErr(ex){ if(isMissingTable(ex)){ showDbSetup(); return 'The Supabase tables (profiles / connections / messages) do not exist yet — run the one-time setup SQL shown at the top of this page in Supabase → SQL Editor, then try again.'; } const col=missingColumnOf(ex); if(col!==null){ showDbSetup(); return 'Your Supabase profiles table is missing the ‘'+(col||'a')+'’ column, so this could not be saved. Run the one-time fix SQL shown at the top of this page — it adds any missing columns and keeps your existing data — then try again.'; } return (ex && ex.message) ? ex.message : 'Something went wrong — please try again.'; }
 async function fetchMyProfile(id){ if(!sb) return null; const r=await sb.from('profiles').select('*').eq('id', id).maybeSingle(); if(r.error){ if(isMissingTable(r.error)) showDbSetup(); return null; } return r.data; }
 let allProfiles=[], myConnections=[], myMessages=[];
 function registerCollege(col){ if(col && col.id && !COLLEGES.some(c=>c.id===col.id)) COLLEGES.push(col); }
@@ -863,14 +889,14 @@ function resolveProfileCollege(name, city, stateName){
   entry.type=getCollegeType(entry);
   COLLEGES.push(entry); refreshCollegeLists(); return entry;
 }
-async function persistUser(){ const me=state.user&&state.user.id; if(!me || !sb) return; const c=collegeById(state.user.collegeId); const upd={name:state.user.name, college_name:c.name, city:c.city, state:c.state, course:state.user.course, year:state.user.year, interests:[...state.user.interests], looking:[...state.user.looking], bio:state.user.bio, onboarded:!!state.user.onboarded}; const r=await sb.from('profiles').update(upd).eq('id', me); if(r.error && isMissingTable(r.error)) showDbSetup(); }
+async function persistUser(){ const me=state.user&&state.user.id; if(!me || !sb) return; const c=collegeById(state.user.collegeId); const upd={name:state.user.name, college_name:c.name, city:c.city, state:c.state, course:state.user.course, year:state.user.year, interests:[...state.user.interests], looking:[...state.user.looking], bio:state.user.bio, onboarded:!!state.user.onboarded}; const r=await profilesWrite('update', upd, me); if(r.error && (isMissingTable(r.error) || isMissingColumn(r.error))) showDbSetup(); }
 function loadUserIntoState(prof){ if(!prof) return; const c=resolveProfileCollege(prof.college_name, prof.city, prof.state); state.user={id:prof.id, name:prof.name||'', email:prof.email||'', collegeId:c.id, course:prof.course||'', year:prof.year||'2nd year', interests:[...(prof.interests||[])], looking:[...(prof.looking||[])], bio:prof.bio||'', onboarded:!!prof.onboarded}; state.selectedCollegeId=c.id; const pill=document.querySelector('#topLocationPill'); if(pill && prof.college_name) pill.textContent='📍 '+c.name+' · '+c.city; }
 function fmtTime(ts){ try{ return new Date(ts).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}); }catch(e){ return ''; } }
 function toPerson(u){ const c=resolveProfileCollege(u.college_name, u.city, u.state); const myC=collegeById(state.user.collegeId); const mutual=(u.interests||[]).filter(i=>state.user.interests.includes(i)).length; let match=55+mutual*8; if(c.id===state.user.collegeId) match+=22; else if(c.city===myC.city) match+=10; match=Math.min(99,match); const distance= c.id===state.user.collegeId ? 'Same campus' : (c.city===myC.city ? 'Same city' : c.city); return {id:u.id, name:u.name||'Student', initials:initials(u.name||'Student'), color:c.color||'#0E5E4A', collegeId:c.id, course:u.course||'', year:u.year||'', city:c.city, online:!!u.online, distance:distance, match:match, bio:u.bio||'', interests:u.interests||[], looking:(u.looking&&u.looking[0])||'Just hang out'}; }
 function refreshPeople(){ PEOPLE = allProfiles.filter(u=>state.user.id && u.id!==state.user.id).map(toPerson); }
 function syncStateFromDB(){ const me=state.user&&state.user.id; state.connected=new Set(); state.sent=new Set(); state.incoming=new Set(); state.requests=[]; state.chats={}; state.unread={}; if(me){ myConnections.forEach(rel=>{ const other=rel.requester_id===me?rel.addressee_id:rel.requester_id; if(rel.status==='accepted') state.connected.add(other); else if(rel.status==='pending'){ if(rel.requester_id===me) state.sent.add(other); else { state.incoming.add(other); state.requests.push({id:other, note:rel.note||'Wants to connect with you on UniCircle'}); } } }); myMessages.forEach(m=>{ const other=m.sender_id===me?m.receiver_id:m.sender_id; if(!state.chats[other]) state.chats[other]=[]; state.chats[other].push({from:m.sender_id===me?'me':'them', text:m.text, time:fmtTime(m.created_at)}); }); if(!state.activeChatId || !state.chats[state.activeChatId]) state.activeChatId=Object.keys(state.chats)[0]||null; } refreshPeople(); }
 async function loadCloudData(){ const me=state.user&&state.user.id; if(!me || !sb) return; const res=await Promise.all([ sb.from('profiles').select('*').order('created_at',{ascending:true}), sb.from('connections').select('*').or('requester_id.eq.'+me+',addressee_id.eq.'+me), sb.from('messages').select('*').or('sender_id.eq.'+me+',receiver_id.eq.'+me).order('created_at',{ascending:true}).limit(1000) ]); const pr=res[0], cn=res[1], ms=res[2]; const firstErr=pr.error||cn.error||ms.error; if(firstErr && isMissingTable(firstErr)) showDbSetup(); if(!pr.error) allProfiles=pr.data||[]; if(!cn.error) myConnections=cn.data||[]; if(!ms.error) myMessages=ms.data||[]; const onboard=$('#onboardView'); const mine=allProfiles.find(p=>p.id===me); if(mine && (!onboard || onboard.classList.contains('hidden'))) loadUserIntoState(mine); syncStateFromDB(); }
-async function afterAuth(user){ if(!sb || !user) return; let prof=await fetchMyProfile(user.id); if(!prof){ const md=user.user_metadata||{}; prof={id:user.id, name:md.name||'', email:user.email||'', college_name:md.college_name||'', city:md.city||'', state:md.state||'', course:'', year:'2nd year', interests:[], looking:[], bio:'', onboarded:false, online:true}; const ins=await sb.from('profiles').insert(prof); if(ins.error && isMissingTable(ins.error)){ showDbSetup(); showToast('Supabase tables missing — run the setup SQL shown at the top of this page'); } } loadUserIntoState(prof); sb.from('profiles').update({online:true}).eq('id', user.id).then(()=>{}, ()=>{}); if(prof.onboarded){ await enterApp(); showToast('Welcome back, '+(prof.name||'').split(' ')[0]+' 👋 Signed in — same account on every device'); } else { startOnboarding(); showToast('Welcome — finish setting up your profile'); } }
+async function afterAuth(user){ if(!sb || !user) return; let prof=await fetchMyProfile(user.id); if(!prof){ const md=user.user_metadata||{}; prof={id:user.id, name:md.name||'', email:user.email||'', college_name:md.college_name||'', city:md.city||'', state:md.state||'', course:'', year:'2nd year', interests:[], looking:[], bio:'', onboarded:false, online:true}; const ins=await profilesWrite('insert', prof); if(ins.error && isMissingTable(ins.error)){ showDbSetup(); showToast('Supabase tables missing — run the setup SQL shown at the top of this page'); } else if(ins.error && isMissingColumn(ins.error)){ showDbSetup(); } } loadUserIntoState(prof); profilesWrite('update', {online:true}, user.id).then(()=>{}, ()=>{}); if(prof.onboarded){ await enterApp(); showToast('Welcome back, '+(prof.name||'').split(' ')[0]+' 👋 Signed in — same account on every device'); } else { startOnboarding(); showToast('Welcome — finish setting up your profile'); } }
 
 let state = {
   user:{ id:null, name:'', email:'', collegeId:null, course:'', year:'2nd year', interests:[], looking:[], bio:'', onboarded:false },
@@ -1127,7 +1153,7 @@ async function handleAuth(e){ e.preventDefault(); const email=$('#email').value.
       return;
     }
     const profile={id:r.data.user.id, name:name, email:email, college_name:entry.name, city:entry.city, state:entry.state, course:'', year:'2nd year', interests:[], looking:[], bio:'', onboarded:false, online:true};
-    const ins=await sb.from('profiles').insert(profile);
+    const ins=await profilesWrite('insert', profile);
     if(ins.error) throw ins.error;
     loadUserIntoState(profile); signupSelectedCollegeId=entry.id;
     startOnboarding(); showToast('Account created in the cloud ✓ '+entry.name+', '+entry.city+' is set — finish your profile');

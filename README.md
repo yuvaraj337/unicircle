@@ -20,7 +20,11 @@ Open `index.html` in any browser. No build step is needed — it is a single sel
 
 ## Supabase setup
 
-In Supabase, run the SQL for the `profiles`, `connections` and `messages` tables with Row Level Security (see the in-app setup banner if tables are missing). Email confirmation is on by default in Supabase Auth: after sign-up, confirm the email, then sign in.
+In Supabase, run the SQL for the `profiles`, `connections` and `messages` tables with Row Level Security (see the in-app setup banner if tables are missing). The banner SQL is a repair pass: it adds any missing columns with `alter table … add column if not exists` (including `college_name` and `looking`) and reloads the schema cache, without deleting existing accounts or data.
+
+Profile saves are resilient: if Supabase reports a missing column, the app drops just that field, retries, and shows a plain-language message instead of a raw schema-cache error.
+
+Email confirmation is on by default in Supabase Auth: after sign-up, confirm the email, then sign in. Turn off "Confirm email" in Authentication → Sign In / Providers → Email for instant sign-in during testing.
 
 ## Storage note
 

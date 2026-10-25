@@ -1,22 +1,27 @@
 # UniCircle
 
-UniCircle is a College Friend Finder for students across India.
+UniCircle is a College Friend Finder for students across India, backed by Supabase.
 
 Students create an account, enter their college name and the city/state where the college is present, discover classmates, connect, and chat.
 
 ## Features
 
-- Login / sign-up — accounts are stored in the browser's localStorage, no sample/demo accounts
+- Supabase Auth login / sign-up (email + password) — no sample/demo accounts, no localStorage accounts
+- Profiles stored in Supabase, visible to all signed-in users across laptop and mobile
 - Create Account with college name, city and state/UT
 - 133-college list tagged by type: Diploma, BTech, Medical and University, with a Google Maps link built from the exact typed college + city + state
-- Discover real accounts created in the same browser, filtered by same college, same city, online status and mutual interests
-- Connections (accept / decline) and chats stored between accounts in localStorage
+- Discover real Supabase profiles, filtered by same college, same city, online status and mutual interests
+- Connections (accept / decline) and chats stored in Supabase
 - Hero scrolling marquee and a scroll-driven Campus Journey animation (entering college, gates opening, meeting friends)
 
 ## Run it
 
-Open `index.html` in any browser. No build step is needed — it is a single self-contained HTML file.
+Open `index.html` in any browser. No build step is needed — it is a single self-contained HTML file that connects to Supabase.
+
+## Supabase setup
+
+In Supabase, run the SQL for the `profiles`, `connections` and `messages` tables with Row Level Security (see the in-app setup banner if tables are missing). Email confirmation is on by default in Supabase Auth: after sign-up, confirm the email, then sign in.
 
 ## Storage note
 
-Everything is stored only in this browser on this device (localStorage). Closing and reopening the tab signs you back in on the same browser, but accounts do not transfer to another device or browser.
+Accounts and profiles live in Supabase, not in browser localStorage, so a laptop account shows up on mobile and vice versa.
